@@ -54,7 +54,7 @@ fun LandingScreen(navController: NavController) {
     val systemUiController = rememberSystemUiController()
 
     SideEffect {
-        systemUiController.setSystemBarsColor(Color(0xFF6353F3))
+        systemUiController.setSystemBarsColor(Color(0xFF3ACED3))
         systemUiController.setNavigationBarColor(Color.Black)
     }
 
@@ -63,9 +63,9 @@ fun LandingScreen(navController: NavController) {
         Font(R.font.opensans_res),
     )
     val colorStops = arrayOf(
-        0.2f to Color(0xFF6353F3),
-        0.5f to Color(0xFF3C2EBD),
-        1f to Color(0xFF190F6F)
+        0.2f to Color(0xFF3ACED3),
+        0.5f to Color(0xFF34B4B8),
+        1f to Color(0xFF0E4B4D)
     )
     Box(
         modifier = Modifier

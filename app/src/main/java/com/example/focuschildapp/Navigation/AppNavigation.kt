@@ -11,8 +11,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.focus.Presentation.Screens.Landing.LandingScreen
+import com.example.focuschildapp.ScreensPkg.Accessibility
+import com.example.focuschildapp.ScreensPkg.DisplayOverOtherApps
 import com.example.focuschildapp.ScreensPkg.MainPage
-import com.example.focuschildapp.ScreensPkg.PermissionsScreen
+import com.example.focuschildapp.ScreensPkg.PermissionScreen
+import com.example.focuschildapp.ScreensPkg.UsageAccess
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
 import com.google.accompanist.navigation.animation.composable
@@ -29,11 +32,19 @@ fun SetupNavGraph(
             LandingScreen(navController)
         }
         composable(Screens.PermissionsScreen.route) {
-            PermissionsScreen(navController)
+            PermissionScreen(navController)
         }
         composable(Screens.MainPage.route) {
             MainPage(navController)
         }
-
+        composable(Screens.DisplayOverOtherApps.route){
+            DisplayOverOtherApps()
+        }
+        composable(Screens.Accessibility.route){
+            Accessibility()
+        }
+        composable(Screens.UsageAccess.route){
+            UsageAccess()
+        }
     }
 }
