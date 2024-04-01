@@ -38,13 +38,13 @@ fun SetupNavGraph(
             MainPage(navController)
         }
         composable(Screens.DisplayOverOtherApps.route){
-            DisplayOverOtherApps()
+            DisplayOverOtherApps(navController)
         }
         composable(Screens.Accessibility.route){
-            Accessibility()
+            Accessibility(navController)
         }
         composable(Screens.UsageAccess.route){
-            UsageAccess()
+            UsageAccess(navController)
         }
     }
 }

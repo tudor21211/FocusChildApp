@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    kotlin("kapt") version "1.9.0"
 }
 
 android {
@@ -65,6 +66,13 @@ dependencies {
     implementation ("com.google.accompanist:accompanist-drawablepainter:0.28.0")
     implementation ("androidx.navigation:navigation-compose:2.5.0")
     implementation ("com.google.accompanist:accompanist-navigation-animation:0.24.13-rc")
+    implementation("io.coil-kt:coil:2.4.0")
+    implementation ("io.coil-kt:coil-gif:2.2.2")
+    implementation("io.coil-kt:coil-compose:2.2.2")
+    val room_version = "2.6.1"
+    implementation ("androidx.room:room-runtime:$room_version")
+    implementation ("androidx.room:room-ktx:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
