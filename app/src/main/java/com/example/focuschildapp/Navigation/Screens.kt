@@ -7,4 +7,6 @@ sealed class Screens (val route : String){
     object DisplayOverOtherApps : Screens(route = "displayOverOtherApps")
     object Accessibility : Screens(route = "accessibility")
     object UsageAccess : Screens(route = "usageAccess")
+    object RegisterScreen : Screens (route = "registerScreen")
+    object LoginScreen : Screens (route = "loginScreen")
 }

@@ -13,8 +13,10 @@ import androidx.navigation.compose.NavHost
 import com.example.focus.Presentation.Screens.Landing.LandingScreen
 import com.example.focuschildapp.ScreensPkg.Accessibility
 import com.example.focuschildapp.ScreensPkg.DisplayOverOtherApps
+import com.example.focuschildapp.ScreensPkg.LoginScreen
 import com.example.focuschildapp.ScreensPkg.MainPage
 import com.example.focuschildapp.ScreensPkg.PermissionScreen
+import com.example.focuschildapp.ScreensPkg.RegisterScreen
 import com.example.focuschildapp.ScreensPkg.UsageAccess
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
@@ -27,7 +29,7 @@ fun SetupNavGraph(
     context : Context
 ) {
 
-    AnimatedNavHost(navController = navController, startDestination = Screens.LandingScreen.route) {
+    AnimatedNavHost(navController = navController, startDestination = Screens.LoginScreen.route) {
         composable(Screens.LandingScreen.route) {
             LandingScreen(navController)
         }
@@ -45,6 +47,12 @@ fun SetupNavGraph(
         }
         composable(Screens.UsageAccess.route){
             UsageAccess(navController)
+        }
+        composable(Screens.RegisterScreen.route){
+            RegisterScreen(navController, context)
+        }
+        composable(Screens.LoginScreen.route){
+            LoginScreen(navController, context)
         }
     }
 }

@@ -98,7 +98,7 @@ fun LandingScreen(navController: NavController) {
             Button(
                 onClick = {
                     println("tutorial permission $tutorialPermissionsFinished")
-                    if (!tutorialPermissionsFinished) navController.navigate(Screens.PermissionsScreen.route)
+                    if (!tutorialPermissionsFinished) navController.navigate(Screens.RegisterScreen.route)
                     else navController.navigate(Screens.MainPage.route)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0A0A05)),
