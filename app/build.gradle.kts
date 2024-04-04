@@ -83,7 +83,12 @@ dependencies {
     implementation ("com.google.dagger:hilt-android:2.47")
     kapt ("com.google.dagger:hilt-android-compiler:2.47")
 
+    //hilt dagger injection
     implementation ("androidx.hilt:hilt-navigation-compose:1.1.0-alpha01")
+
+    //qr code generation
+    implementation ("com.google.zxing:core:3.4.1")
+    implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -17,6 +17,7 @@ class MainPageViewModel @Inject constructor(
     }
 
     fun getAuthState() = repo.getAuthState(viewModelScope)
-
+    fun signOut() = repo.signOut()
     fun getUserEmail() = repo.currentUser?.email
+    fun getUserUid() = repo.currentUser?.uid
 }
