@@ -8,8 +8,8 @@ import androidx.navigation.NavHostController
 import com.example.focus.Presentation.Screens.Landing.LandingScreen
 import com.example.focuschildapp.ScreensPkg.Accessibility
 import com.example.focuschildapp.ScreensPkg.DisplayOverOtherApps
-import com.example.focuschildapp.ScreensPkg.LoginScreen
-import com.example.focuschildapp.ScreensPkg.MainPage
+import com.example.focuschildapp.com.example.focuschildapp.ScreensPkg.LoginScreen.LoginScreen
+import com.example.focuschildapp.com.example.focuschildapp.ScreensPkg.MainPage.MainPage
 import com.example.focuschildapp.ScreensPkg.PermissionScreen
 import com.example.focuschildapp.ScreensPkg.RegisterScreen.RegisterScreen
 import com.example.focuschildapp.ScreensPkg.UsageAccess

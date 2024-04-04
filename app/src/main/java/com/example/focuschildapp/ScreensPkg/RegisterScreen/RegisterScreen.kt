@@ -1,6 +1,7 @@
 package com.example.focuschildapp.ScreensPkg.RegisterScreen
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -48,6 +51,7 @@ import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.R
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.focuschildapp.Firebase.domain.Response
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,6 +103,7 @@ fun RegisterScreen(
                 )
             }
         }
+        val lifecycleOwner = LocalLifecycleOwner.current
         Spacer(modifier = Modifier.fillMaxHeight(.1f))
         Box() {
             Column {
@@ -128,8 +133,57 @@ fun RegisterScreen(
                     "Register",
                     Color.White,
                     onClick = {
-                        viewModel.signUpWithEmailAndPassword(email, password)
-                        navController.navigate(Screens.MainPage.route)
+                        if(password != repeatPassword)
+                            Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                        else {
+                            viewModel.signUpWithEmailAndPassword(email, password)
+
+                            viewModel.signUpResponse.observe(lifecycleOwner) { response ->
+                                when (response) {
+                                    is Response.Loading -> {
+                                        // Handle loading state
+                                        println("THE LOAD RESPONSE IS $response")
+                                    }
+
+                                    is Response.Success -> {
+                                        val data: Boolean = response.data
+                                        println("THE SUCCESS RESPONSE IS $response")
+                                        navController.navigate(Screens.MainPage.route)
+                                    }
+
+                                    is Response.Failure -> {
+                                        val exception: Exception = response.e
+                                        println("THE ERROR RESPONSE IS $response")
+                                        if (response.toString() == "Failure(e=com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted.)")
+                                            Toast.makeText(
+                                                context,
+                                                "Please input a valid email address",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        else if (response.toString() == "Failure(e=com.google.firebase.auth.FirebaseAuthUserCollisionException: The email address is already in use by another account.)")
+                                            Toast.makeText(
+                                                context,
+                                                "Email is already in use",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        else if (response.toString() == "Failure(e=com.google.firebase.auth.FirebaseAuthWeakPasswordException: The given password is invalid. [ Password should be at least 6 characters ])")
+                                            Toast.makeText(
+                                                context,
+                                                "Password should be at least 6 characters",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        else
+                                            Toast.makeText(
+                                                context,
+                                                "An error occurred",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                    }
+                                }
+                            }
+                        }
+
+
                     })
                 Spacer(modifier = Modifier.fillMaxHeight(.2f))
                 Text(
@@ -220,7 +274,6 @@ fun registerButton(
     text: String,
     buttonTextColor : Color,
     onClick : () -> Unit = { }){
-
 
     Column() {
         Spacer(modifier = Modifier.fillMaxHeight(.05f))
