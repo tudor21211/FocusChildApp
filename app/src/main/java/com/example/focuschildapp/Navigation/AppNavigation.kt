@@ -13,6 +13,7 @@ import com.example.focuschildapp.com.example.focuschildapp.ScreensPkg.MainPage.M
 import com.example.focuschildapp.ScreensPkg.PermissionScreen
 import com.example.focuschildapp.ScreensPkg.RegisterScreen.RegisterScreen
 import com.example.focuschildapp.ScreensPkg.UsageAccess
+import com.example.focuschildapp.Utils.ProgressBar
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
 import com.google.accompanist.navigation.animation.composable
@@ -50,6 +51,9 @@ fun SetupNavGraph(
         }
         composable(Screens.LoginScreen.route){
             LoginScreen(navController, context)
+        }
+        composable(Screens.LoadingScreen.route){
+            ProgressBar(navController)
         }
     }
 }
