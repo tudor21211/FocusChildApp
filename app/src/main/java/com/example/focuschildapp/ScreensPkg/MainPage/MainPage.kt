@@ -17,8 +17,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -47,6 +50,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -76,6 +80,7 @@ fun MainPage(
         systemUiController.setNavigationBarColor(Color.Black)
     }
 
+    var connectionStatus by remember { mutableStateOf("Not connected") }
 
 
     Column(
@@ -139,9 +144,29 @@ fun MainPage(
             Row(
                 modifier = Modifier.padding(top = 10.dp)
             ) {
-                Text(text = "User: ", fontSize = 25.sp, color = Color.White)
-                Text(text = "${viewModel.getUserEmail()}", fontSize = 25.sp, color = Color.White)
+                //Text(text = "User: ", fontSize = 25.sp, color = Color.White, fontFamily = FontFamily(Font(R.font.opensans_medium)))
+                Icon(
+                    imageVector = Icons.Filled.Person,
+                    contentDescription = "go to settings",
+                    tint = Color(0xFF000000),
+                    modifier = Modifier
+                        .size(35.dp)
+                )
+                Text(text = "${viewModel.getUserEmail()}", fontSize = 25.sp, color = Color.White, fontFamily = FontFamily(Font(R.font.opensans_medium)))
             }
+            Row(
+                modifier = Modifier.padding(top = 10.dp)
+            ){
+                Text(text = "Current status: ", fontSize = 25.sp, color = Color.White, fontFamily = FontFamily(Font(R.font.opensans_medium)))
+                Text(
+                    text = connectionStatus,
+                    fontSize = 25.sp,
+                    color = if(connectionStatus == "Not connected") Color.Red else Color.Green,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily(Font(R.font.opensans_medium))
+                )
+            }
+
             Spacer(modifier = Modifier.fillMaxHeight(.15f))
 
             var cardFace by remember { mutableStateOf(FaceCardType.Back) }
@@ -162,7 +187,7 @@ fun MainPage(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color(0xFF34495e)),
+                            .background(Color(0xFF3F5974)),
                         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.SpaceAround
                     ) {
@@ -182,6 +207,14 @@ fun MainPage(
                                 modifier = Modifier.padding(top = 10.dp, bottom = 10.dp),
                                 color = Color.White
                             )
+                        Icon(
+                            imageVector = Icons.Filled.Refresh,
+                            contentDescription = "Sign Out",
+                            tint = Color(0xFF000000),
+                            modifier = Modifier
+                                .size(40.dp)
+                                .padding(top = 1.dp),
+                        )
 
                     }
                 },
@@ -298,7 +331,7 @@ fun CardFlipper(
     val spinAnimation = animateFloatAsState(
         targetValue = cardType.angle,
         animationSpec = tween(
-            durationMillis = 1000,
+            durationMillis = 800,
             easing = FastOutSlowInEasing,
         ), label = ""
     )
@@ -312,7 +345,7 @@ fun CardFlipper(
                 } else {
                     rotationY = spinAnimation.value
                 }
-                cameraDistance = 12f * density
+                cameraDistance = 10f * density
             },
     ) {
         if (spinAnimation.value <= 90f) {

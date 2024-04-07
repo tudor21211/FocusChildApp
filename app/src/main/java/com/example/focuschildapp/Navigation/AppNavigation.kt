@@ -24,8 +24,8 @@ fun SetupNavGraph(
     navController: NavHostController,
     context : Context
 ) {
-
-    AnimatedNavHost(navController = navController, startDestination = Screens.RegisterScreen.route) {
+//change to LandingPage start destination
+    AnimatedNavHost(navController = navController, startDestination = Screens.LandingScreen.route) {
         composable(Screens.LandingScreen.route) {
             LandingScreen(navController)
         }
@@ -46,7 +46,7 @@ fun SetupNavGraph(
         }
         composable(Screens.RegisterScreen.route){
             RegisterScreen(navController, context, signUp = { email, password ->
-                navController.navigate(Screens.MainPage.route)
+                navController.navigate(Screens.PermissionsScreen.route)
             })
         }
         composable(Screens.LoginScreen.route){
@@ -55,5 +55,8 @@ fun SetupNavGraph(
         composable(Screens.LoadingScreen.route){
             ProgressBar(navController)
         }
+
+        //TODO !!!! FIX PERMISSION SCREEN NAVIGATION TO SETTINGS, NOT ACCEPTING, BACK BACK
+
     }
 }

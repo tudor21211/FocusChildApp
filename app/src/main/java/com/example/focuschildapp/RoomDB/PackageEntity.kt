@@ -20,7 +20,7 @@ data class PackageEntity(
 data class UserEntity(
     @PrimaryKey(autoGenerate = true)
     val id : Int,
-    val username: String,
+    val email: String,
     val passwordHash: String,
     val salt: String? = null,
 )

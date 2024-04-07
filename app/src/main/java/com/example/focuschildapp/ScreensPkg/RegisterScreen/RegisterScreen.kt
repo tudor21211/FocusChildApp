@@ -142,18 +142,15 @@ fun RegisterScreen(
                                 when (response) {
                                     is Response.Loading -> {
                                         // Handle loading state
-                                        println("THE LOAD RESPONSE IS $response")
                                     }
 
                                     is Response.Success -> {
                                         val data: Boolean = response.data
-                                        println("THE SUCCESS RESPONSE IS $response")
-                                        navController.navigate(Screens.MainPage.route)
+                                        navController.navigate(Screens.PermissionsScreen.route)
                                     }
 
                                     is Response.Failure -> {
                                         val exception: Exception = response.e
-                                        println("THE ERROR RESPONSE IS $response")
                                         if (response.toString() == "Failure(e=com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted.)")
                                             Toast.makeText(
                                                 context,

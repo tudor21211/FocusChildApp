@@ -92,14 +92,12 @@ fun LandingScreen(navController: NavController) {
                 fontSize = 100.sp
             )
 
-
             Spacer(modifier = Modifier.weight(.1f))
 
             Button(
                 onClick = {
                     println("tutorial permission $tutorialPermissionsFinished")
-                    if (!tutorialPermissionsFinished) navController.navigate(Screens.RegisterScreen.route)
-                    else navController.navigate(Screens.MainPage.route)
+                    navController.navigate(Screens.LoginScreen.route)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0A0A05)),
                 modifier = Modifier

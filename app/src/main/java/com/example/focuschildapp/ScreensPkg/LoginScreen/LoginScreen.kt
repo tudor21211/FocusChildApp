@@ -125,7 +125,7 @@ fun LoginScreen(
                                     println("")
                                 }
                                 is Response.Success -> {
-                                    navController.navigate(Screens.MainPage.route)
+                                    navController.navigate(Screens.PermissionsScreen.route)
                                     println("Success")
                                 }
                                 is Response.Failure -> {
