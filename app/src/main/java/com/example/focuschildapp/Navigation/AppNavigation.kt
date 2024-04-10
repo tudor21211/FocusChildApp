@@ -33,7 +33,7 @@ fun SetupNavGraph(
             PermissionScreen(navController)
         }
         composable(Screens.MainPage.route) {
-            MainPage(navController)
+            MainPage(navController, context)
         }
         composable(Screens.DisplayOverOtherApps.route){
             DisplayOverOtherApps(navController)

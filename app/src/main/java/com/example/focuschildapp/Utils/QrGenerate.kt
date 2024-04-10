@@ -2,12 +2,18 @@ package com.example.focuschildapp.com.example.focuschildapp.Utils
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.util.Base64
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
+import java.io.ByteArrayOutputStream
 import java.util.Hashtable
 
 class QrGenerate {
@@ -45,6 +51,45 @@ class QrGenerate {
             }
 
             return null
+        }
+
+        fun drawableToByteString(drawable: Drawable): String? {
+            val bitmap = drawableToBitmap(drawable)
+
+            val byteArray = bitmapToByteArray(bitmap)
+
+            return Base64.encodeToString(byteArray, Base64.DEFAULT)
+        }
+
+        private fun drawableToBitmap(drawable: Drawable): Bitmap {
+            val bitmap = if (drawable.intrinsicWidth <= 0 || drawable.intrinsicHeight <= 0) {
+                Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+            } else {
+                Bitmap.createBitmap(
+                    drawable.intrinsicWidth,
+                    drawable.intrinsicHeight,
+                    Bitmap.Config.ARGB_8888
+                )
+            }
+
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+
+            return bitmap
+        }
+
+        private fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
+            val stream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            return stream.toByteArray()
+        }
+
+        //CONVERT BACK TO DRAWABLE
+        fun byteStringToDrawable(byteString: String): Drawable {
+            val byteArray = Base64.decode(byteString, Base64.DEFAULT)
+            val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+            return BitmapDrawable(null, bitmap)
         }
 
     }

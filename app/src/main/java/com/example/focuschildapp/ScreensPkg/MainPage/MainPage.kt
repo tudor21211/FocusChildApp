@@ -1,5 +1,7 @@
 package com.example.focuschildapp.com.example.focuschildapp.ScreensPkg.MainPage
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -59,6 +61,7 @@ import androidx.navigation.NavController
 import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.R
 import com.example.focuschildapp.Utils.ProgressBar
+import com.example.focuschildapp.com.example.focuschildapp.Services.ServerService
 import com.example.focuschildapp.com.example.focuschildapp.Utils.QrGenerate
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
@@ -68,8 +71,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainPage(
     navController: NavController,
+    context : Context,
     viewModel: MainPageViewModel = hiltViewModel()
 ) {
+
+
+    val i: Intent = Intent(context, ServerService::class.java)
+    context.startService(i)
+
 
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     var showDialog by remember { mutableStateOf(false) }

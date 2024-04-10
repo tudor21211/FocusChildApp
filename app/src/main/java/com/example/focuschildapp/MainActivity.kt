@@ -1,6 +1,5 @@
 package com.example.focuschildapp
 
-import android.app.admin.DevicePolicyManager
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
@@ -10,22 +9,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.Navigation.SetupNavGraph
 import com.example.focuschildapp.Permissions.PermissionFunctions
-import com.example.focuschildapp.ui.theme.FocusChildAppTheme
+import com.example.focuschildapp.com.example.focuschildapp.Services.ServerService
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.zxing.integration.android.IntentIntegrator.REQUEST_CODE
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -37,6 +28,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             navController = rememberAnimatedNavController()
             SetupNavGraph(navController = navController, this)
