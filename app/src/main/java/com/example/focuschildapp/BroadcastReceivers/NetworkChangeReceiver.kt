@@ -8,12 +8,14 @@ import com.example.focuschildapp.com.example.focuschildapp.Services.ServerServic
 
 class NetworkChangeReceiver(private val serverService: ServerService) : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        val serverService = ServerService.instance
         if (ConnectivityManager.CONNECTIVITY_ACTION == intent.action) {
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val networkInfo = connectivityManager.activeNetworkInfo
             if (networkInfo != null && networkInfo.isConnected) {
-                serverService.connectWebSocket()
+                serverService?.connectWebSocket()
             }
+
         }
     }
 }

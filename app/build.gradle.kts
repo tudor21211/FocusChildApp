@@ -16,7 +16,9 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
+        lint {
+            baseline = file("lint-baseline.xml")
+        }
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true

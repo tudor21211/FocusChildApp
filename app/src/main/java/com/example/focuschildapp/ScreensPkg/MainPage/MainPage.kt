@@ -7,7 +7,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,37 +18,29 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -60,13 +51,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.R
-import com.example.focuschildapp.Utils.ProgressBar
+import com.example.focuschildapp.com.example.focuschildapp.Services.MyAccessibilityService
 import com.example.focuschildapp.com.example.focuschildapp.Services.ServerService
 import com.example.focuschildapp.com.example.focuschildapp.Utils.QrGenerate
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+
 
 @Composable
 fun MainPage(
@@ -76,8 +66,10 @@ fun MainPage(
 ) {
 
 
-    val i: Intent = Intent(context, ServerService::class.java)
-    context.startService(i)
+    if (FirebaseAuth.getInstance().currentUser != null) {
+        val i: Intent = Intent(context, ServerService::class.java)
+        context.startService(i)
+    }
 
 
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -120,6 +112,11 @@ fun MainPage(
                         onClick = {
                             showDialog = false
                             FirebaseAuth.getInstance().signOut()
+                            val intent: Intent = Intent(
+                                context,
+                                ServerService::class.java
+                            )
+                            context.stopService(intent)
                             navController.navigate(Screens.LoginScreen.route)
 
                         },
@@ -271,8 +268,7 @@ fun ElevatedQrCard(
     ElevatedCard(
         modifier = Modifier
             .fillMaxHeight(1f)
-            .fillMaxWidth(1f)
-            ,
+            .fillMaxWidth(1f),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF3F5974)),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 40.dp,

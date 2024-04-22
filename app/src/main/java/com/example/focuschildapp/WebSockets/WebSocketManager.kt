@@ -1,14 +1,13 @@
 package com.example.focuschildapp.com.example.focuschildapp.WebSockets
 
-import org.json.JSONObject
 import android.app.usage.UsageStatsManager
 import android.content.Context
-import android.provider.Settings
+import android.os.Build
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
+import com.example.focuschildapp.com.example.focuschildapp.Utils.GetAppsFunctions
+import com.example.focuschildapp.com.example.focuschildapp.Utils.QrGenerate
 import com.example.websocket.RoomDB.AppDatabase
-import com.example.websocket.RoomDB.PackageEntity
 import com.example.websocket.RoomDB.PackageViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -16,14 +15,15 @@ import kotlinx.coroutines.launch
 import okhttp3.*
 import okhttp3.WebSocketListener
 import okio.ByteString
+import org.json.JSONArray
+import org.json.JSONObject
 
-class WebSocketManager(private val context: Context) : WebSocketListener() {
+class WebSocketManager(private val context: Context, private val userUid: String, private val email: String) : WebSocketListener() {
 
     private val _messages: MutableState<List<String>> = mutableStateOf(emptyList())
     private val messages: MutableState<List<String>> = _messages
     private var appDatabase: AppDatabase = AppDatabase.getDatabase(context.applicationContext)
     private var packagesViewModel: PackageViewModel = PackageViewModel(appDatabase.packagesDao())
-
 
     private fun getMessages(): MutableState<List<String>> {
         return messages
@@ -31,6 +31,7 @@ class WebSocketManager(private val context: Context) : WebSocketListener() {
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)
+        webSocket.send("$userUid:child")
         println("WebSocket connection established.")
     }
 
@@ -39,6 +40,10 @@ class WebSocketManager(private val context: Context) : WebSocketListener() {
         if (text.contains("SALUT")) {
             webSocket.send("IM STILL RUNNING IN BACKGROUND")
         }
+        if(text == "send binding details") {
+            webSocket.send("${Build.MANUFACTURER} ${Build.MODEL}:{device_manufacturer}")
+        }
+
         /*
         _messages.value += listOf(text)
         val androidId: String =
@@ -81,6 +86,34 @@ class WebSocketManager(private val context: Context) : WebSocketListener() {
             }
 
         }*/
+
+        when {
+            text.startsWith("$userUid SEND_FIRST_TIME_APPS_DETAILS") -> {
+                val allApps = GetAppsFunctions(
+                    context.packageManager,
+                    context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager,
+                    context = context
+                ).createAppList()
+                val jsonArray = JSONArray()
+                GlobalScope.launch(Dispatchers.Default) {
+                    for (apps in allApps) {
+                        val jsonObject = JSONObject().apply {
+                            put("userId", userUid)
+                            put("email", email)
+                            put("appName", apps.appName)
+                            put("packageName", apps.appPackageName)
+                            put("icon", QrGenerate.drawableToByteString(apps.icon))
+                        }
+                        jsonArray.put(jsonObject)
+                    }
+                    val finalJsonObject = JSONObject().apply {
+                        put("addUserToDatabase", jsonArray) // Add the array to a final JSON object
+                    }
+                    webSocket.send(finalJsonObject.toString())
+                }
+            }
+
+        }
     }
 
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
@@ -92,6 +125,7 @@ class WebSocketManager(private val context: Context) : WebSocketListener() {
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
         super.onClosing(webSocket, code, reason)
         webSocket.send("Closing connection...")
+        webSocket?.close(code, reason)
         println("WebSocket connection closed.")
     }
 

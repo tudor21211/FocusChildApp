@@ -35,7 +35,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:usesCleartextTraffic="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
+
         android:supportsRtl="true"
         android:theme="@style/Theme.FocusChildApp"
         tools:targetApi="31">
@@ -67,7 +67,6 @@
 
         <service
             android:name = ".com.example.focuschildapp.Services.ServerService"
-            android:foregroundServiceType="dataSync"
         />
 
         <receiver android:name=".com.example.focuschildapp.BroadcastReceivers.NetworkChangeReceiver"
@@ -77,7 +76,13 @@
             </intent-filter>
         </receiver>
 
-
+        <receiver android:name = ".com.example.focuschildapp.BroadcastReceivers.RebootReceiver"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+            </intent-filter>
+        </receiver>
 
     </application>
 
