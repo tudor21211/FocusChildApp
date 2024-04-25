@@ -10,26 +10,38 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavHostController
 import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.Navigation.SetupNavGraph
 import com.example.focuschildapp.Permissions.PermissionFunctions
 import com.example.focuschildapp.com.example.focuschildapp.Services.ServerService
+import com.example.websocket.RoomDB.AppDatabase
+import com.example.websocket.RoomDB.BlockedAppEntity
+import com.example.websocket.RoomDB.PackageViewModel
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private lateinit var navController: NavHostController
     private val viewModel by viewModels<MainViewModel>()
-
+    private lateinit var packagesViewModel: PackageViewModel
+    private lateinit var appDatabase: AppDatabase
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        appDatabase = AppDatabase.getDatabase(applicationContext)
+        packagesViewModel = PackageViewModel(appDatabase.packagesDao())
+//        GlobalScope.launch {
+//            println("RESULT OF QUERY IS ${packagesViewModel.isAppBlocked("com.android.chrome")}")
+//        }
         setContent {
+
             navController = rememberAnimatedNavController()
             SetupNavGraph(navController = navController, this)
             AuthState()

@@ -18,12 +18,23 @@ import android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.RequiresApi
 import com.example.focuschildapp.com.example.focuschildapp.Services.RestrictedAppView
+import com.example.websocket.RoomDB.AppDatabase
+import com.example.websocket.RoomDB.PackageViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MyAccessibilityService : AccessibilityService() {
     private var windowManager: WindowManager? = null
     private var restrictedView: RestrictedAppView? = null
     private var isOverlayShown = false
     private var delayedHandler: Handler? = null
+    private var appDatabase: AppDatabase? = null
+    private var packagesViewModel: PackageViewModel? = null
+//    private var appDatabase: AppDatabase = AppDatabase.getDatabase(this)
+//    private var packagesViewModel: PackageViewModel = PackageViewModel(appDatabase.packagesDao())
+
     private val removeViewRunnable = Runnable {
 
         removeRestrictedView()
@@ -35,15 +46,44 @@ class MyAccessibilityService : AccessibilityService() {
 
     }
 
-
+    override fun onCreate() {
+        super.onCreate()
+        appDatabase = AppDatabase.getDatabase(applicationContext)
+        packagesViewModel = PackageViewModel(appDatabase!!.packagesDao())
+    }
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
 
         var packageName = event?.packageName.toString()
+        println("CURRENT APP IS $packageName")
         var accessNodeInfo = event.source?.let { AccessibilityNodeInfo(it) }
-
+        var blockApp = false
         accessNodeInfo?.refresh()
         var idResourceName = accessNodeInfo?.viewIdResourceName
+
+
+        GlobalScope.launch {
+            if(packagesViewModel?.isAppBlocked(packageName) == 1) {
+                withContext(Dispatchers.Main) {
+                    if (!isOverlayShown) {
+                        showRestrictedView()
+                        isOverlayShown = true
+
+                        // Schedule a delayed action to remove the restricted view after 3 seconds
+                        delayedHandler = Handler(Looper.getMainLooper())
+                        delayedHandler?.postDelayed(removeViewRunnable, 3000)
+                    }
+                }
+            }
+        }
+
+
+
+
+        // Remove the restricted view immediately if the user leaves the app
+        if (isOverlayShown && packageName == "com.android.launcher") {
+            removeViewImmediately()
+        }
 
 
         /*

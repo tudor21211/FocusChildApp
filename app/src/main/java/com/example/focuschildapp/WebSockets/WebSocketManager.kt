@@ -3,11 +3,13 @@ package com.example.focuschildapp.com.example.focuschildapp.WebSockets
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.example.focuschildapp.com.example.focuschildapp.Utils.GetAppsFunctions
 import com.example.focuschildapp.com.example.focuschildapp.Utils.QrGenerate
 import com.example.websocket.RoomDB.AppDatabase
+import com.example.websocket.RoomDB.BlockedAppEntity
 import com.example.websocket.RoomDB.PackageViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -16,6 +18,7 @@ import okhttp3.*
 import okhttp3.WebSocketListener
 import okio.ByteString
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 
 class WebSocketManager(private val context: Context, private val userUid: String, private val email: String) : WebSocketListener() {
@@ -35,73 +38,37 @@ class WebSocketManager(private val context: Context, private val userUid: String
         println("WebSocket connection established.")
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onMessage(webSocket: WebSocket, text: String) {
         super.onMessage(webSocket, text)
-        if (text.contains("SALUT")) {
-            webSocket.send("IM STILL RUNNING IN BACKGROUND")
-        }
+        var jsonObjectToProcess : JSONObject = JSONObject()
         if(text == "send binding details") {
             webSocket.send("${Build.MANUFACTURER} ${Build.MODEL}:{device_manufacturer}")
         }
-
-        /*
-        _messages.value += listOf(text)
-        val androidId: String =
-            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-
-        if (text.contains("appName")) {
-            val jsonObject = JSONObject(text)
-            val sendToId = jsonObject.getString("sendToId")
-            println("THE SEND TO ID IS $sendToId AND THE ANDROID ID IS $androidId")
-            if(sendToId != androidId) return //sending only back to the requester else returning
-            val appName = jsonObject.getString("appName")
-            val packageName = jsonObject.getString("packageName")
-            val icon = jsonObject.getString("icon")
-
-            GlobalScope.launch(Dispatchers.Default) {
-                packagesViewModel.insert(
-                    PackageEntity(0, packageName, appName, icon)
-                )
-            }
+        try {
+             jsonObjectToProcess  = JSONObject(text)
+        } catch (e: JSONException) {
+            println("Invalid JSON string: $text")
         }
-
-        if (text.startsWith("$androidId sendImage")) {
-            webSocket.send("Received all icons: \n")
-            val allApps = GetAppsFunctions(
-                context.packageManager,
-                context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager,
-                context = context
-            ).createAppList()
-            GlobalScope.launch(Dispatchers.Default) {
-                for (apps in allApps) {
-                    val jsonObject = JSONObject().apply {
-                        put("appName", apps.appName)
-                        put("packageName", apps.appPackageName)
-                        //put("icon", drawableToByteString(apps.icon))
-                    }
-                    jsonObject.put("sendToId", text.split(" ")[2])
-                    webSocket.send(jsonObject.toString())
-                    //drawableToByteString(apps.icon)?.let { webSocket.send("data:image,$it") }
-                }
-            }
-
-        }*/
-
+        println("JSON OBJECT IS $jsonObjectToProcess")
         when {
+
             text.startsWith("$userUid SEND_FIRST_TIME_APPS_DETAILS") -> {
                 val allApps = GetAppsFunctions(
                     context.packageManager,
                     context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager,
                     context = context
-                ).createAppList()
+                ).createAppListWithTimeSpent(0)
                 val jsonArray = JSONArray()
                 GlobalScope.launch(Dispatchers.Default) {
                     for (apps in allApps) {
                         val jsonObject = JSONObject().apply {
                             put("userId", userUid)
                             put("email", email)
+                            put("deviceType", Build.MANUFACTURER+" "+Build.MODEL)
                             put("appName", apps.appName)
-                            put("packageName", apps.appPackageName)
+                            put("packageName", apps.packageName)
+                            put("timeSpent", apps.timeSpentLong)
                             put("icon", QrGenerate.drawableToByteString(apps.icon))
                         }
                         jsonArray.put(jsonObject)
@@ -113,7 +80,18 @@ class WebSocketManager(private val context: Context, private val userUid: String
                 }
             }
 
+            jsonObjectToProcess.has("${userUid}_BLOCK_PACKAGE") ->{
+               println("RECEIVED THE BLOCK")
+               val jsonArray = jsonObjectToProcess.getJSONArray("${userUid}_BLOCK_PACKAGE")
+               val data =   jsonArray.getJSONObject(0)
+               val blockedPackage : String = data.getString("packageName")
+               val timeBlocked : Int = data.getInt("timeBlocked")
+               GlobalScope.launch(Dispatchers.Default) {
+                   packagesViewModel.insertBlockedApp(BlockedAppEntity(blockedPackage, timeBlocked))
+               }
+            }
         }
+
     }
 
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {

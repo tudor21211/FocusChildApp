@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 
-@Database(entities = [PackageEntity::class], version = 2)
+@Database(entities = [PackageEntity::class, BlockedAppEntity::class], version = 2)
 abstract class AppDatabase : RoomDatabase(){
         abstract fun packagesDao(): PackagesDAO
 

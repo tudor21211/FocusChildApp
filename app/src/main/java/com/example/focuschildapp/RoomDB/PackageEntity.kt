@@ -16,11 +16,9 @@ data class PackageEntity(
     val icon : String
 )
 
-@Entity(tableName = "users", indices = [Index(value = ["unique_id"], unique = true)])
-data class UserEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id : Int,
-    val email: String,
-    val passwordHash: String,
-    val salt: String? = null,
+@Entity(tableName = "blockedApps")
+data class BlockedAppEntity(
+    @PrimaryKey(autoGenerate = false)
+    val packageName: String,
+    val timeBlocked : Int
 )
