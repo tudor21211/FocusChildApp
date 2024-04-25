@@ -69,11 +69,13 @@ class MyAccessibilityService : AccessibilityService() {
                         showRestrictedView()
                         isOverlayShown = true
 
-                        // Schedule a delayed action to remove the restricted view after 3 seconds
                         delayedHandler = Handler(Looper.getMainLooper())
                         delayedHandler?.postDelayed(removeViewRunnable, 3000)
                     }
                 }
+            }
+            if (isOverlayShown && (packageName == "com.android.launcher" || packageName == "com.google.android.apps.nexuslauncher")) {
+                removeViewImmediately()
             }
         }
 
@@ -81,9 +83,7 @@ class MyAccessibilityService : AccessibilityService() {
 
 
         // Remove the restricted view immediately if the user leaves the app
-        if (isOverlayShown && packageName == "com.android.launcher") {
-            removeViewImmediately()
-        }
+
 
 
         /*

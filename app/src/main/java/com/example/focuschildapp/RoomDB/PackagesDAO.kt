@@ -16,7 +16,7 @@ interface PackagesDAO {
     @Query("SELECT * FROM packages")
     fun getAllPackages(): Flow<List<PackageEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBlockedApp(note : BlockedAppEntity)
 
     @Query("SELECT timeBlocked FROM blockedApps WHERE packageName=:packageName")
