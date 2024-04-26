@@ -6,10 +6,12 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEntity
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedWebsiteEntity
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.RestrictedKeywordEntity
 import com.example.focuschildapp.com.example.focuschildapp.Utils.GetAppsFunctions
 import com.example.focuschildapp.com.example.focuschildapp.Utils.QrGenerate
 import com.example.websocket.RoomDB.AppDatabase
-import com.example.websocket.RoomDB.BlockedAppEntity
 import com.example.websocket.RoomDB.PackageViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -90,6 +92,27 @@ class WebSocketManager(private val context: Context, private val userUid: String
                    packagesViewModel.insertBlockedApp(BlockedAppEntity(blockedPackage, timeBlocked))
                }
             }
+
+            jsonObjectToProcess.has("${userUid}_BLOCK_WEBSITE") ->{
+                val jsonArray = jsonObjectToProcess.getJSONArray("${userUid}_BLOCK_WEBSITE")
+                val data =   jsonArray.getJSONObject(0)
+                val blockedWebsite : String = data.getString("website")
+                val userId : String = data.getString("userId")
+                GlobalScope.launch(Dispatchers.Default) {
+                    packagesViewModel.insertBlockedWebsite(BlockedWebsiteEntity(blockedWebsite, userId))
+                }
+            }
+
+            jsonObjectToProcess.has("${userUid}_BLOCK_KEYWORD") ->{
+                val jsonArray = jsonObjectToProcess.getJSONArray("${userUid}_BLOCK_KEYWORD")
+                val data =   jsonArray.getJSONObject(0)
+                val restrictedKeyword : String = data.getString("keyword")
+                val userId : String = data.getString("userId")
+                GlobalScope.launch(Dispatchers.Default) {
+                    packagesViewModel.insertRestrictedKeyword(RestrictedKeywordEntity(restrictedKeyword, userId))
+                }
+            }
+
         }
 
     }
@@ -109,6 +132,6 @@ class WebSocketManager(private val context: Context, private val userUid: String
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         super.onFailure(webSocket, t, response)
-        println("WebSocket connection failed: ${t.message}")
+        println("WebSocket connection failed: ${t.message} $response")
     }
 }

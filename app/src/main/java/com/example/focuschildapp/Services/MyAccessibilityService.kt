@@ -23,6 +23,7 @@ import com.example.websocket.RoomDB.PackageViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 class MyAccessibilityService : AccessibilityService() {
@@ -51,6 +52,7 @@ class MyAccessibilityService : AccessibilityService() {
         appDatabase = AppDatabase.getDatabase(applicationContext)
         packagesViewModel = PackageViewModel(appDatabase!!.packagesDao())
     }
+
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
 
@@ -81,6 +83,8 @@ class MyAccessibilityService : AccessibilityService() {
 
 
 
+//TODO READ BLOCKED WEBSITE AND KEYWORD AND BLOCK IT
+
 
         // Remove the restricted view immediately if the user leaves the app
 
@@ -110,22 +114,7 @@ class MyAccessibilityService : AccessibilityService() {
 
                     }
                 }
-
-
-
-                if (packageName in getRestrictedApps() && !isOverlayShown) {
-                    showRestrictedView()
-                    isOverlayShown = true
-
-                    // Schedule a delayed action to remove the restricted view after 3 seconds
-                    delayedHandler = Handler(Looper.getMainLooper())
-                    delayedHandler?.postDelayed(removeViewRunnable, 3000)
-                }
-
-                // Remove the restricted view immediately if the user leaves the app
-                if (isOverlayShown && packageName == "com.android.launcher") {
-                    removeViewImmediately()
-                }
+*/
 
                 if (browserList.contains(packageName)) {
                     try {
@@ -147,20 +136,23 @@ class MyAccessibilityService : AccessibilityService() {
                     if (!findUrlBar.isNullOrEmpty()) {
                         val text = findUrlBar?.get(0)?.text.toString()
                         try {
-                            val restrictedUrl = RestrictedAppsManager.getRestrictedUrl()
-                            for (t in restrictedUrl) if (text.contains(t)) {
-                                val url = UserPreferences.getNavigateUrl()
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                                intent.flags = FLAG_ACTIVITY_NEW_TASK
-                                startActivity(intent)
-                            }
+                             GlobalScope.launch {
+                                 val isBlockedWebsite = packagesViewModel?.isWebsiteBlocked(text)
+                                 if(isBlockedWebsite == true) {
+                                     val url = UserPreferences.getNavigateUrl()
+                                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                     intent.flags = FLAG_ACTIVITY_NEW_TASK
+                                     startActivity(intent)
+                                 }
+                             }
+
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
                     }
 
                 }
-        */
+
 
     }
 
@@ -223,7 +215,8 @@ class MyAccessibilityService : AccessibilityService() {
 
     private val BROWSERS: String = "com.android.chrome"
     private val browserList: List<String> = BROWSERS.split(",\\s*")
-    /*private var blacklistedKeywords = RestrictedAppsManager.getRestrictedKeywords()
+    private val blacklistedKeywords: List<String>
+        get() = runBlocking { packagesViewModel?.getRestrictedKeywords() ?: listOf() }
     private fun getAllWindowContent(info: AccessibilityNodeInfo) {
 
         try {
@@ -252,7 +245,9 @@ class MyAccessibilityService : AccessibilityService() {
             println("Exception caught in getUrls")
             ex.printStackTrace()
         }
-    }*/
+    }
 
 
 }
+
+

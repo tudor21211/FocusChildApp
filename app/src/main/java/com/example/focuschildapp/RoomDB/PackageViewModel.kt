@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEntity
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedWebsiteEntity
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.RestrictedKeywordEntity
 import kotlinx.coroutines.launch
 
 class PackageViewModel (private val packagesDao : PackagesDAO) : ViewModel() {
@@ -20,5 +23,29 @@ class PackageViewModel (private val packagesDao : PackagesDAO) : ViewModel() {
         return packagesDao.isAppBlocked(packageName)
     }
 
+    suspend fun insertBlockedWebsite(blockedWebsiteEntity: BlockedWebsiteEntity) = viewModelScope.launch {
+        packagesDao.insertBlockedWebsite(blockedWebsiteEntity)
+    }
+
+
+    suspend fun insertRestrictedKeyword(restrictedKeywordsEntity: RestrictedKeywordEntity) = viewModelScope.launch {
+        packagesDao.insertRestrictedKeyword(restrictedKeywordsEntity)
+    }
+
+    suspend fun getRestrictedWebsites() : List<String>{
+        return packagesDao.getBlockedWebsites()
+    }
+
+    suspend fun getRestrictedKeywords() : List<String>{
+        return packagesDao.getRestrictedKeywords()
+    }
+
+    suspend fun isWebsiteBlocked(websiteUrl: String): Boolean {
+        return packagesDao.isWebsiteBlocked(websiteUrl)
+    }
+
+    suspend fun isRestrictedKeyword(restrictedKeyword: String): Boolean {
+        return packagesDao.isWebsiteBlocked(restrictedKeyword)
+    }
 }
 

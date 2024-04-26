@@ -18,7 +18,6 @@ import com.example.focuschildapp.Navigation.SetupNavGraph
 import com.example.focuschildapp.Permissions.PermissionFunctions
 import com.example.focuschildapp.com.example.focuschildapp.Services.ServerService
 import com.example.websocket.RoomDB.AppDatabase
-import com.example.websocket.RoomDB.BlockedAppEntity
 import com.example.websocket.RoomDB.PackageViewModel
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint

@@ -16,9 +16,3 @@ data class PackageEntity(
     val icon : String
 )
 
-@Entity(tableName = "blockedApps")
-data class BlockedAppEntity(
-    @PrimaryKey(autoGenerate = false)
-    val packageName: String,
-    val timeBlocked : Int
-)
