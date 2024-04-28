@@ -44,4 +44,10 @@ interface PackagesDAO {
     suspend fun isRestrictedKeyword(restrictedKeyword: String): Boolean
 
 
+    @Query("DELETE FROM blockedWebsites WHERE websiteURL=:websiteUrl")
+    suspend fun removeBlockedWebsite(websiteUrl: String)
+    @Query("DELETE FROM restrictedKeywords WHERE restrictedKeyword=:restrictedKeyword")
+    suspend fun removeRestrictedKeyword(restrictedKeyword: String)
+
+
 }

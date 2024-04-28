@@ -47,5 +47,13 @@ class PackageViewModel (private val packagesDao : PackagesDAO) : ViewModel() {
     suspend fun isRestrictedKeyword(restrictedKeyword: String): Boolean {
         return packagesDao.isWebsiteBlocked(restrictedKeyword)
     }
+
+    suspend fun removeBlockedWebsite(websiteUrl: String) {
+        packagesDao.removeBlockedWebsite(websiteUrl)
+    }
+
+    suspend fun removeRestrictedKeyword(keyword: String) {
+        packagesDao.removeRestrictedKeyword(keyword)
+    }
 }
 

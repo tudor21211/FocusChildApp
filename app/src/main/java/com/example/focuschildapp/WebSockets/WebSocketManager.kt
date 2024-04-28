@@ -113,6 +113,26 @@ class WebSocketManager(private val context: Context, private val userUid: String
                 }
             }
 
+            jsonObjectToProcess.has("${userUid}_REMOVE_WEBSITE") ->{
+                val jsonArray = jsonObjectToProcess.getJSONArray("${userUid}_REMOVE_WEBSITE")
+                val data =   jsonArray.getJSONObject(0)
+                val blockedWebsite : String = data.getString("website")
+                val userId : String = data.getString("userId")
+                GlobalScope.launch(Dispatchers.Default) {
+                    packagesViewModel.removeBlockedWebsite(blockedWebsite)
+                }
+            }
+
+            jsonObjectToProcess.has("${userUid}_REMOVE_KEYWORD") ->{
+                val jsonArray = jsonObjectToProcess.getJSONArray("${userUid}_REMOVE_KEYWORD")
+                val data =   jsonArray.getJSONObject(0)
+                val restrictedKeyword : String = data.getString("keyword")
+                val userId : String = data.getString("userId")
+                GlobalScope.launch(Dispatchers.Default) {
+                    packagesViewModel.removeRestrictedKeyword(restrictedKeyword)
+                }
+            }
+
         }
 
     }
