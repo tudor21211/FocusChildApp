@@ -133,6 +133,30 @@ class WebSocketManager(private val context: Context, private val userUid: String
                 }
             }
 
+            //UPDATE APPS DATA AFTER RECEIVING THE REQUEST
+            text.startsWith("$userUid UPDATE_APPS_DATA") -> {
+                val allApps = GetAppsFunctions(
+                    context.packageManager,
+                    context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager,
+                    context = context
+                ).createAppListWithTimeSpent(0)
+                val jsonArray = JSONArray()
+                GlobalScope.launch(Dispatchers.Default) {
+                    for (apps in allApps) {
+                        val jsonObject = JSONObject().apply {
+                            put("userId", userUid)
+                            put("packageName", apps.packageName)
+                            put("timeSpent", apps.timeSpentLong)
+                        }
+                        jsonArray.put(jsonObject)
+                    }
+                    val finalJsonObject = JSONObject().apply {
+                        put("UPDATE_APPS_DATA", jsonArray) // Add the array to a final JSON object
+                    }
+                    webSocket.send(finalJsonObject.toString())
+                }
+            }
+
         }
 
     }
