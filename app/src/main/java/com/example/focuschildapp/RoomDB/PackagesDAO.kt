@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedWebsiteEntity
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.PackageStatsEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.RestrictedKeywordEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -49,5 +50,7 @@ interface PackagesDAO {
     @Query("DELETE FROM restrictedKeywords WHERE restrictedKeyword=:restrictedKeyword")
     suspend fun removeRestrictedKeyword(restrictedKeyword: String)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPackageStats(packageStatsEntity: PackageStatsEntity)
 
 }

@@ -2,12 +2,14 @@ package com.example.focuschildapp.com.example.focuschildapp.WebSockets
 
 import android.app.usage.UsageStatsManager
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedWebsiteEntity
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.PackageStatsEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.RestrictedKeywordEntity
 import com.example.focuschildapp.com.example.focuschildapp.Utils.GetAppsFunctions
 import com.example.focuschildapp.com.example.focuschildapp.Utils.QrGenerate
@@ -22,6 +24,8 @@ import okio.ByteString
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class WebSocketManager(private val context: Context, private val userUid: String, private val email: String) : WebSocketListener() {
 
@@ -29,7 +33,7 @@ class WebSocketManager(private val context: Context, private val userUid: String
     private val messages: MutableState<List<String>> = _messages
     private var appDatabase: AppDatabase = AppDatabase.getDatabase(context.applicationContext)
     private var packagesViewModel: PackageViewModel = PackageViewModel(appDatabase.packagesDao())
-
+    private val sharedPreferences : SharedPreferences = context.getSharedPreferences("PARENT_DEVICE_CONNECTED", Context.MODE_PRIVATE)
     private fun getMessages(): MutableState<List<String>> {
         return messages
     }
@@ -44,9 +48,7 @@ class WebSocketManager(private val context: Context, private val userUid: String
     override fun onMessage(webSocket: WebSocket, text: String) {
         super.onMessage(webSocket, text)
         var jsonObjectToProcess : JSONObject = JSONObject()
-        if(text == "send binding details") {
-            webSocket.send("${Build.MANUFACTURER} ${Build.MODEL}:{device_manufacturer}")
-        }
+
         try {
              jsonObjectToProcess  = JSONObject(text)
         } catch (e: JSONException) {
@@ -54,6 +56,12 @@ class WebSocketManager(private val context: Context, private val userUid: String
         }
         println("JSON OBJECT IS $jsonObjectToProcess")
         when {
+
+            text.startsWith("CONNECTED_PARENT") -> {
+                val editor = sharedPreferences.edit()
+                editor.putBoolean("PARENT_DEVICE_CONNECTED", true)
+                editor.apply()
+            }
 
             text.startsWith("$userUid SEND_FIRST_TIME_APPS_DETAILS") -> {
                 val allApps = GetAppsFunctions(
@@ -77,6 +85,49 @@ class WebSocketManager(private val context: Context, private val userUid: String
                     }
                     val finalJsonObject = JSONObject().apply {
                         put("addUserToDatabase", jsonArray) // Add the array to a final JSON object
+                    }
+                    webSocket.send(finalJsonObject.toString())
+                }
+            }
+
+            text.startsWith("$userUid SEND_STATISTICS_TIME") -> {
+                val getAppsFunctions = GetAppsFunctions(
+                    context.packageManager,
+                    context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager,
+                    context = context
+                )
+                val jsonArray = JSONArray()
+                val allApps = getAppsFunctions.createAppListWithTimeSpent(0)
+                val threeDaysApps = getAppsFunctions.createAppListWithTimeSpent(3)
+                val sevenDaysApps = getAppsFunctions.createAppListWithTimeSpent(7)
+                val thirtyDaysApps = getAppsFunctions.createAppListWithTimeSpent(30)
+
+                GlobalScope.launch(Dispatchers.Default) {
+                    for (app in allApps) {
+                        val oneDayUsage = app.timeSpentLong
+                        val threeDaysUsage = threeDaysApps.find { it.packageName == app.packageName }?.timeSpentLong ?: 0
+                        val sevenDaysUsage = sevenDaysApps.find { it.packageName == app.packageName }?.timeSpentLong ?: 0
+                        val thirtyDaysUsage = thirtyDaysApps.find { it.packageName == app.packageName }?.timeSpentLong ?: 0
+
+                        val packageStatsEntity = PackageStatsEntity(
+                            packageName = app.packageName,
+                            oneDay = oneDayUsage,
+                            threeDays = threeDaysUsage,
+                            oneWeek = sevenDaysUsage,
+                            oneMonth = thirtyDaysUsage
+                        )
+                        val jsonObject = JSONObject().apply{
+                            put("packageName", app.packageName)
+                            put("oneDay", oneDayUsage)
+                            put("threeDays", threeDaysUsage)
+                            put("oneWeek", sevenDaysUsage)
+                            put("oneMonth", thirtyDaysUsage)
+                        }
+                        jsonArray.put(jsonObject)
+                        packagesViewModel.insertPackageStats(packageStatsEntity)
+                    }
+                    val finalJsonObject = JSONObject().apply {
+                        put("ADD_STATISTICS_DETAILS", jsonArray) // Add the array to a final JSON object
                     }
                     webSocket.send(finalJsonObject.toString())
                 }
@@ -150,6 +201,11 @@ class WebSocketManager(private val context: Context, private val userUid: String
                         }
                         jsonArray.put(jsonObject)
                     }
+                    jsonArray.put(JSONObject().apply {
+                        val sdf = SimpleDateFormat("MMM dd , yyyy HH:mm")
+                        val resultDate = Date(System.currentTimeMillis())
+                        put("updateTime", sdf.format(resultDate))
+                    })
                     val finalJsonObject = JSONObject().apply {
                         put("UPDATE_APPS_DATA", jsonArray) // Add the array to a final JSON object
                     }

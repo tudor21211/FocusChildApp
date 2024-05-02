@@ -8,8 +8,10 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.annotation.RequiresApi
+import java.text.SimpleDateFormat
 import java.time.Duration
 import java.util.Calendar
+import java.util.Date
 
 class GetAppsFunctions(
     private val packageManager: PackageManager,
@@ -236,6 +238,12 @@ class GetAppsFunctions(
             totalLaunches += getAppLaunchCount(info.packageName)
         }
         return totalLaunches
+    }
+
+    fun formatCurrentTime(currentTime : Long) : String {
+        val sdf = SimpleDateFormat("MMM dd,yyyy HH:mm")
+        val resultDate = Date(currentTime)
+        return resultDate.toString()
     }
 
 }

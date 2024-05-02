@@ -6,6 +6,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedWebsiteEntity
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.PackageStatsEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.RestrictedKeywordEntity
 import kotlinx.coroutines.launch
 
@@ -54,6 +55,10 @@ class PackageViewModel (private val packagesDao : PackagesDAO) : ViewModel() {
 
     suspend fun removeRestrictedKeyword(keyword: String) {
         packagesDao.removeRestrictedKeyword(keyword)
+    }
+
+    suspend fun insertPackageStats(packageStatsEntity: PackageStatsEntity) {
+        packagesDao.insertPackageStats(packageStatsEntity)
     }
 }
 

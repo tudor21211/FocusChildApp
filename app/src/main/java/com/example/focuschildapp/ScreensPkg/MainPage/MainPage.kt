@@ -2,6 +2,7 @@ package com.example.focuschildapp.com.example.focuschildapp.ScreensPkg.MainPage
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -31,6 +32,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -81,8 +84,25 @@ fun MainPage(
         systemUiController.setNavigationBarColor(Color.Black)
     }
 
-    var connectionStatus by remember { mutableStateOf("Not connected") }
+    val sharedPreferences = context.getSharedPreferences("PARENT_DEVICE_CONNECTED", Context.MODE_PRIVATE)
+    var parentDeviceConnected = sharedPreferences.getBoolean("PARENT_DEVICE_CONNECTED", false)
 
+    var connectionStatus by remember { mutableStateOf(parentDeviceConnected) }
+
+    //LIVE UPDATE OF CONNECTION STATUS
+    DisposableEffect(key1 = sharedPreferences) {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == "PARENT_DEVICE_CONNECTED") {
+                connectionStatus = sharedPreferences.getBoolean("PARENT_DEVICE_CONNECTED", false)
+            }
+        }
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+
+        onDispose {
+            sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -163,11 +183,12 @@ fun MainPage(
             Row(
                 modifier = Modifier.padding(top = 10.dp)
             ){
+
                 Text(text = "Current status: ", fontSize = 25.sp, color = Color.White, fontFamily = FontFamily(Font(R.font.opensans_medium)))
                 Text(
-                    text = connectionStatus,
+                    text = if(connectionStatus) "Connected" else "Not connected",
                     fontSize = 25.sp,
-                    color = if(connectionStatus == "Not connected") Color.Red else Color.Green,
+                    color = if(connectionStatus) Color.Green else Color.Red,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily(Font(R.font.opensans_medium))
                 )
