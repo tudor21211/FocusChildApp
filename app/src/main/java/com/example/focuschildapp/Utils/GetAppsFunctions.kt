@@ -18,13 +18,14 @@ class GetAppsFunctions(
     private val usageStatsManager: UsageStatsManager,
     private val context : Context
 ) {
+
     private var nonSystemApps: List<ApplicationInfo> = listOf()
 
-    private fun getNonSystemApps(): List<ApplicationInfo> {
+    public fun getNonSystemApps(): List<ApplicationInfo> {
         return nonSystemApps
     }
 
-    private fun getInstalledApps() {
+    public fun getInstalledApps() {
         var listInstalledApps: List<ApplicationInfo> = packageManager.getInstalledApplications(
             PackageManager.GET_ACTIVITIES
         )
@@ -245,5 +246,7 @@ class GetAppsFunctions(
         val resultDate = Date(currentTime)
         return resultDate.toString()
     }
+
+
 
 }

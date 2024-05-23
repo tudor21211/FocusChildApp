@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.AppTimeSpentEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedWebsiteEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.PackageStatsEntity
@@ -59,6 +60,10 @@ class PackageViewModel (private val packagesDao : PackagesDAO) : ViewModel() {
 
     suspend fun insertPackageStats(packageStatsEntity: PackageStatsEntity) {
         packagesDao.insertPackageStats(packageStatsEntity)
+    }
+
+    suspend fun insertAppTimeSpentEntity(appTimeSpentEntity: AppTimeSpentEntity) {
+        packagesDao.insertAppTimeSpent(appTimeSpentEntity)
     }
 }
 

@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class BlockedAppEntity(
     @PrimaryKey(autoGenerate = false)
     val packageName: String,
-    val timeBlocked : Int
+    val timeBlocked : Int,
 )

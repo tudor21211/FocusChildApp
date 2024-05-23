@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -215,7 +216,7 @@ fun RegisterScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun registerCards(topText: String, prompt: String, icon: ImageVector, isPasswordField : Boolean, onValueChanged: (String) -> Unit = {}) {
+fun registerCards(topText: String, prompt: String, icon: ImageVector, isPasswordField : Boolean, onValueChanged: (String) -> Unit = {}, modifier: Modifier = Modifier) {
     val inputValue = remember { mutableStateOf(TextFieldValue()) }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
@@ -247,7 +248,7 @@ fun registerCards(topText: String, prompt: String, icon: ImageVector, isPassword
                     )
                 }
             },
-            modifier = Modifier.fillMaxWidth(1f),
+            modifier = Modifier.fillMaxWidth(1f).testTag(if (isPasswordField) "passwordField" else "emailField"),
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color.Black, // Text color
                 containerColor = Color(0xFFF0EDED),

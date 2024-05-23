@@ -1,12 +1,17 @@
 package com.example.focuschildapp.com.example.focuschildapp.WebSockets
 
+import android.Manifest
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Build
+import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.app.ActivityCompat
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedWebsiteEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.PackageStatsEntity
@@ -15,6 +20,11 @@ import com.example.focuschildapp.com.example.focuschildapp.Utils.GetAppsFunction
 import com.example.focuschildapp.com.example.focuschildapp.Utils.QrGenerate
 import com.example.websocket.RoomDB.AppDatabase
 import com.example.websocket.RoomDB.PackageViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -26,6 +36,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 class WebSocketManager(private val context: Context, private val userUid: String, private val email: String) : WebSocketListener() {
 
@@ -34,6 +45,8 @@ class WebSocketManager(private val context: Context, private val userUid: String
     private var appDatabase: AppDatabase = AppDatabase.getDatabase(context.applicationContext)
     private var packagesViewModel: PackageViewModel = PackageViewModel(appDatabase.packagesDao())
     private val sharedPreferences : SharedPreferences = context.getSharedPreferences("PARENT_DEVICE_CONNECTED", Context.MODE_PRIVATE)
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var lastLocation: Location? = null
     private fun getMessages(): MutableState<List<String>> {
         return messages
     }
@@ -101,8 +114,12 @@ class WebSocketManager(private val context: Context, private val userUid: String
                 val threeDaysApps = getAppsFunctions.createAppListWithTimeSpent(3)
                 val sevenDaysApps = getAppsFunctions.createAppListWithTimeSpent(7)
                 val thirtyDaysApps = getAppsFunctions.createAppListWithTimeSpent(30)
+                val time = getAppsFunctions.getTimeSpent(0)
+                var screenTime24h = getAppsFunctions.getTotalTimeSpent(time)
+                getAppsFunctions.getInstalledApps()
+                val launchTracker = getAppsFunctions.allAppsLaunchTracker(getAppsFunctions.getNonSystemApps())
 
-                GlobalScope.launch(Dispatchers.Default) {
+                    GlobalScope.launch(Dispatchers.Default) {
                     for (app in allApps) {
                         val oneDayUsage = app.timeSpentLong
                         val threeDaysUsage = threeDaysApps.find { it.packageName == app.packageName }?.timeSpentLong ?: 0
@@ -117,6 +134,7 @@ class WebSocketManager(private val context: Context, private val userUid: String
                             oneMonth = thirtyDaysUsage
                         )
                         val jsonObject = JSONObject().apply{
+                            put("userId" , userUid)
                             put("packageName", app.packageName)
                             put("oneDay", oneDayUsage)
                             put("threeDays", threeDaysUsage)
@@ -126,11 +144,24 @@ class WebSocketManager(private val context: Context, private val userUid: String
                         jsonArray.put(jsonObject)
                         packagesViewModel.insertPackageStats(packageStatsEntity)
                     }
+
+                    jsonArray.put(
+                        JSONObject().apply {
+                            put("userId" , userUid)
+                            put("launchTracker" , launchTracker)
+                            put("screenTime",screenTime24h)
+                        }
+                    )
                     val finalJsonObject = JSONObject().apply {
                         put("ADD_STATISTICS_DETAILS", jsonArray) // Add the array to a final JSON object
                     }
                     webSocket.send(finalJsonObject.toString())
                 }
+            }
+
+            text.startsWith("${userUid}_SEND_UPDATE_LOCATION_COORDINATES") -> {
+                println("RECEIVED THE SEND UPDATE")
+                sendLocation(webSocket, userUid)
             }
 
             jsonObjectToProcess.has("${userUid}_BLOCK_PACKAGE") ->{
@@ -233,5 +264,55 @@ class WebSocketManager(private val context: Context, private val userUid: String
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         super.onFailure(webSocket, t, response)
         println("WebSocket connection failed: ${t.message} $response")
+    }
+
+    private fun sendLocation(webSocket: WebSocket, userId : String) {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        val sdf = SimpleDateFormat("M/dd/yyyy HH:mm", Locale.US)
+        val currentTime = sdf.format(Date())
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        val locationRequest = LocationRequest.create().apply {
+            interval = 10000 // Set the desired interval for active location updates, in milliseconds.
+            fastestInterval = 5000 // Set the fastest rate for active location updates, in milliseconds.
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        val locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                locationResult ?: return
+                for (location in locationResult.locations) {
+                    if (lastLocation != null && location.latitude == lastLocation!!.latitude && location.longitude == lastLocation!!.longitude) {
+                        // Stop location updates if the new location is the same as the last location
+                        //fusedLocationClient.removeLocationUpdates(this)
+                        break
+                    } else {
+                        lastLocation = location // Update the last location
+                        val jsonArray = JSONArray().apply {
+                            put(userId)
+                            put(location.latitude)
+                            put(location.longitude)
+                            put(currentTime)
+                        }
+                        val jsonObject = JSONObject().apply {
+                            put("UPDATE_LOCATION_COORDINATES", jsonArray)
+                        }
+                        webSocket.send(jsonObject.toString())
+                    }
+                }
+
+            }
+        }
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
 }

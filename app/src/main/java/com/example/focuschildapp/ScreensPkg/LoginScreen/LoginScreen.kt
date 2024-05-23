@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -98,14 +99,14 @@ fun LoginScreen(
                     prompt = "Enter your email",
                     icon = Icons.Default.AccountCircle,
                     false,
-                    onValueChanged = { email = it }
+                    onValueChanged = { email = it },
                 )
                 registerCards(
                     topText = "Password",
                     prompt = "Enter your password",
                     icon = Icons.Default.Lock,
                     true,
-                    onValueChanged = { password = it }
+                    onValueChanged = { password = it },
                 )
                 registerButton(
                     linearGradient = Brush.linearGradient(

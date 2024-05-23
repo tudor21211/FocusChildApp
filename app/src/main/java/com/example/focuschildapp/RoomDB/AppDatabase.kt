@@ -4,13 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.AppTimeSpentEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedWebsiteEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.PackageStatsEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.RestrictedKeywordEntity
 
 
-@Database(entities = [PackageEntity::class, BlockedAppEntity::class, BlockedWebsiteEntity::class, RestrictedKeywordEntity::class, PackageStatsEntity::class], version = 3)
+@Database(entities = [PackageEntity::class, BlockedAppEntity::class, BlockedWebsiteEntity::class, RestrictedKeywordEntity::class, PackageStatsEntity::class, AppTimeSpentEntity::class], version = 4)
 abstract class AppDatabase : RoomDatabase(){
         abstract fun packagesDao(): PackagesDAO
 

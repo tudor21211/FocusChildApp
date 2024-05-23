@@ -75,6 +75,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.2.2")
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.play.services.location)
     val room_version = "2.6.1"
     val compose_version = "1.8.0"
     implementation ("androidx.room:room-runtime:$room_version")

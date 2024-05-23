@@ -14,6 +14,7 @@ import com.example.focuschildapp.ScreensPkg.PermissionScreen
 import com.example.focuschildapp.ScreensPkg.RegisterScreen.RegisterScreen
 import com.example.focuschildapp.ScreensPkg.UsageAccess
 import com.example.focuschildapp.Utils.ProgressBar
+import com.example.websocket.RoomDB.PackageViewModel
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
 import com.google.accompanist.navigation.animation.composable
@@ -22,10 +23,13 @@ import com.google.accompanist.navigation.animation.composable
 @Composable
 fun SetupNavGraph(
     navController: NavHostController,
-    context : Context
+    context : Context,
+    packagesViewModel: PackageViewModel
 ) {
 //change to LandingPage start destination
     AnimatedNavHost(navController = navController, startDestination = Screens.LandingScreen.route) {
+
+
         composable(Screens.LandingScreen.route) {
             LandingScreen(navController)
         }

@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.AppTimeSpentEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedWebsiteEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.PackageStatsEntity
@@ -52,5 +53,8 @@ interface PackagesDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPackageStats(packageStatsEntity: PackageStatsEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAppTimeSpent(appTimeSpentEntity: AppTimeSpentEntity)
 
 }
