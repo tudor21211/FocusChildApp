@@ -29,7 +29,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -154,7 +157,8 @@ fun PermissionScreen(navController: NavController) {
                 permission.description,
                 navController,
                 permission.route,
-                if (permission.isApproved()) colorStopsCardsApproved else colorStopsCardsDenied
+                if (permission.isApproved()) colorStopsCardsApproved else colorStopsCardsDenied,
+                testTag = permission.title
             )
         }
 
@@ -169,7 +173,8 @@ fun permissionCard(
     content: String,
     navController: NavController,
     navigationRoute: String,
-    colorStops: Array<Pair<Float, Color>>
+    colorStops: Array<Pair<Float, Color>>,
+    testTag : String
 ) {
     val openSans = FontFamily(
         Font(R.font.opensans_res),
@@ -178,7 +183,11 @@ fun permissionCard(
     Card(
         modifier = Modifier
             .height(95.dp)
-            .fillMaxWidth(.96f),
+            .fillMaxWidth(.96f)
+            .testTag(testTag)
+            .semantics {
+                       contentDescription = "Permission Card"
+            },
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 10.dp,

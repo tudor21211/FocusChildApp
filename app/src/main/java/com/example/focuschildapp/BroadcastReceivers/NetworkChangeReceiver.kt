@@ -15,7 +15,6 @@ class NetworkChangeReceiver(private val serverService: ServerService) : Broadcas
             if (networkInfo != null && networkInfo.isConnected) {
                 serverService?.connectWebSocket()
             }
-
         }
     }
 }

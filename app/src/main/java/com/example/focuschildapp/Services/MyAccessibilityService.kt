@@ -33,18 +33,14 @@ class MyAccessibilityService : AccessibilityService() {
     private var delayedHandler: Handler? = null
     private var appDatabase: AppDatabase? = null
     private var packagesViewModel: PackageViewModel? = null
-//    private var appDatabase: AppDatabase = AppDatabase.getDatabase(this)
-//    private var packagesViewModel: PackageViewModel = PackageViewModel(appDatabase.packagesDao())
 
     private val removeViewRunnable = Runnable {
-
         removeRestrictedView()
         isOverlayShown = false
         val home = Intent(Intent.ACTION_MAIN)
         home.addCategory(Intent.CATEGORY_HOME)
         home.flags = FLAG_ACTIVITY_NEW_TASK
         startActivity(home)
-
     }
 
     override fun onCreate() {
@@ -82,39 +78,34 @@ class MyAccessibilityService : AccessibilityService() {
         }
 
 
-
-//TODO READ BLOCKED WEBSITE AND KEYWORD AND BLOCK IT
-
-
         // Remove the restricted view immediately if the user leaves the app
 
 
 
-        /*
-                if (packageName == "com.instagram.android" && RestrictedAppsManager.isInstagramRestricted()) {
+        GlobalScope.launch {
+            if (packageName == "com.instagram.android" && packagesViewModel?.areReelsBlocked() == true) {
 
-                    if (idResourceName == "com.instagram.android:id/scrubber" || idResourceName == "com.instagram.android:id/clips_viewer_view_pager") {
+                if (idResourceName == "com.instagram.android:id/scrubber" || idResourceName == "com.instagram.android:id/clips_viewer_view_pager") {
 
-                        val home = Intent(Intent.ACTION_MAIN)
-                        home.addCategory(Intent.CATEGORY_HOME)
-                        home.flags = FLAG_ACTIVITY_NEW_TASK
-                        startActivity(home)
-                    }
-
+                    val home = Intent(Intent.ACTION_MAIN)
+                    home.addCategory(Intent.CATEGORY_HOME)
+                    home.flags = FLAG_ACTIVITY_NEW_TASK
+                    startActivity(home)
                 }
 
-                if (packageName == "com.google.android.youtube" && RestrictedAppsManager.isYoutubeRestricted()) {
-                    if (idResourceName == "com.google.android.youtube:id/reel_progress_bar" || idResourceName == "com.google.android.youtube:id/reel_recycler") {
+            }
 
-                        val home = Intent(Intent.ACTION_MAIN)
-                        home.addCategory(Intent.CATEGORY_HOME)
-                        home.flags = FLAG_ACTIVITY_NEW_TASK
-                        startActivity(home)
+            if (packageName == "com.google.android.youtube" && packagesViewModel?.areShortsBlocked()==true) {
+                if (idResourceName == "com.google.android.youtube:id/reel_progress_bar" || idResourceName == "com.google.android.youtube:id/reel_recycler") {
 
-
-                    }
+                    val home = Intent(Intent.ACTION_MAIN)
+                    home.addCategory(Intent.CATEGORY_HOME)
+                    home.flags = FLAG_ACTIVITY_NEW_TASK
+                    startActivity(home)
                 }
-*/
+            }
+        }
+
 
                 if (browserList.contains(packageName)) {
                     try {
@@ -180,9 +171,7 @@ class MyAccessibilityService : AccessibilityService() {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
             )
-
             params.gravity = Gravity.CENTER
-
             restrictedView = RestrictedAppView(this)
             windowManager?.addView(restrictedView, params)
 
@@ -201,11 +190,8 @@ class MyAccessibilityService : AccessibilityService() {
         var info = AccessibilityServiceInfo()
         info.apply {
             eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or TYPE_WINDOW_CONTENT_CHANGED
-
             flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
-
             feedbackType = AccessibilityServiceInfo.FEEDBACK_SPOKEN
-
             notificationTimeout = 100
         }
         Log.e(TAG, "on service connected: ")

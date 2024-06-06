@@ -9,6 +9,7 @@ import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEnti
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedWebsiteEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.PackageStatsEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.RestrictedKeywordEntity
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.SpecialFeaturesEntity
 import kotlinx.coroutines.launch
 
 class PackageViewModel (private val packagesDao : PackagesDAO) : ViewModel() {
@@ -21,8 +22,20 @@ class PackageViewModel (private val packagesDao : PackagesDAO) : ViewModel() {
         packagesDao.insertBlockedApp(blockedAppEntity)
     }
 
+    fun insertSpecialFeaturesRestriction(specialFeaturesEntity: SpecialFeaturesEntity) = viewModelScope.launch {
+        packagesDao.updateReelsRestriction(specialFeaturesEntity)
+    }
+
     suspend fun isAppBlocked(packageName : String) : Int {
         return packagesDao.isAppBlocked(packageName)
+    }
+
+    suspend fun areReelsBlocked() : Boolean {
+        return packagesDao.areReelsBlocked()
+    }
+
+    suspend fun areShortsBlocked() : Boolean {
+        return packagesDao.areShortsBlocked()
     }
 
     suspend fun insertBlockedWebsite(blockedWebsiteEntity: BlockedWebsiteEntity) = viewModelScope.launch {

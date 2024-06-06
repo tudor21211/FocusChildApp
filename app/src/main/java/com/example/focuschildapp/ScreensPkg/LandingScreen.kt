@@ -14,11 +14,13 @@ import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -79,20 +81,31 @@ fun LandingScreen(navController: NavController) {
         ) {
 
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(.6f))
 
-            Text(
-                text = "Focus.",
+            Row(
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .align(Alignment.CenterHorizontally)
-                    .weight(1f),
-                color = Color.White,
-                fontFamily = openSans,
-                fontSize = 100.sp
-            )
+                    .wrapContentSize()
+            ) {
+                Column {
+                    Text(
+                        text = "Focus.",
+                        color = Color.White,
+                        fontFamily = openSans,
+                        fontSize = 100.sp
+                    )
+                    Text(
+                        text = "child app",
+                        color = Color.White,
+                        fontFamily = openSans,
+                        fontSize = 40.sp
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.weight(.9f))
 
-            Spacer(modifier = Modifier.weight(.1f))
 
             Button(
                 onClick = {
@@ -104,7 +117,7 @@ fun LandingScreen(navController: NavController) {
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 20.dp)
                     .fillMaxWidth(.9f)
-                    .fillMaxHeight(.1f)
+                    .fillMaxHeight(.08f)
                     .clip(shape = RoundedCornerShape(10.dp))
             ) {
                 Text(

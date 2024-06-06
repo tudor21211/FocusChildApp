@@ -24,10 +24,8 @@ class SignUpViewModel @Inject constructor(
     private var _signUpResponse: MutableLiveData<SignUpResponse> = MutableLiveData()
     val signUpResponse: MutableLiveData<SignUpResponse>
         get() = _signUpResponse
-
     fun signUpWithEmailAndPassword(email: String, password: String): Job {
         signUpResponse.value = Response.Loading
-
         return viewModelScope.launch {
             try {
                 val result = repo.firebaseSignUpWithEmailAndPassword(email, password)

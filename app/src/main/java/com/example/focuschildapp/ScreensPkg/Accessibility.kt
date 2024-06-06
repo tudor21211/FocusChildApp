@@ -80,7 +80,7 @@ fun Accessibility(navController: NavController) {
 
         ) {
         Text(
-            text = "To offer you a seamless and accessible experience, Focus requires 'Accessibility' permission. This allows us to detect when apps are opened, enabling precise blocking during your focused sessions. Your privacy matters, and we handle this information responsibly, solely for optimizing your productivity. Thank you for trusting us to help you stay focused and achieve your goals!",
+            text = "To ensure the safety and appropriate usage of your child's device, our app requires the 'Accessibility' permission. This allows us to detect when apps are opened, enabling effective blocking of restricted content. Your child's privacy matters, and we handle this information responsibly, solely for enhancing their safety. Thank you for trusting us to help you create a secure digital environment for your family!",
             color = Color.White,
             modifier = Modifier
                 .padding(16.dp)

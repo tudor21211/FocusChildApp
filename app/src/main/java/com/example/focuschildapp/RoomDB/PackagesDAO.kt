@@ -10,6 +10,7 @@ import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEnti
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedWebsiteEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.PackageStatsEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.RestrictedKeywordEntity
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.SpecialFeaturesEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -56,5 +57,13 @@ interface PackagesDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAppTimeSpent(appTimeSpentEntity: AppTimeSpentEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateReelsRestriction(specialFeaturesEntity: SpecialFeaturesEntity)
+
+    @Query("SELECT reelsRestriction FROM specialFeatures")
+    suspend fun areReelsBlocked() : Boolean
+    @Query("SELECT shortsRestriction FROM specialFeatures")
+    suspend fun areShortsBlocked() : Boolean
 
 }

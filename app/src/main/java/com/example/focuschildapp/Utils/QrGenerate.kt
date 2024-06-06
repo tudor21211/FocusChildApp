@@ -1,9 +1,9 @@
 package com.example.focuschildapp.com.example.focuschildapp.Utils
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.Base64
@@ -22,14 +22,12 @@ class QrGenerate {
             try {
                 val text = byteArray.toString(Charsets.UTF_8)
 
-                val hints: MutableMap<EncodeHintType, Any> = Hashtable()
-                hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
-                hints[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.L
-
+                val hintsQR: MutableMap<EncodeHintType, Any> = Hashtable()
+                hintsQR[EncodeHintType.CHARACTER_SET] = "UTF-8"
+                hintsQR[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.L
                 val writer = QRCodeWriter()
 
-                val bitMatrix: BitMatrix =
-                    writer.encode(text, BarcodeFormat.QR_CODE, 512, 512, hints)
+                val bitMatrix: BitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 512, 512, hintsQR)
 
                 val width = bitMatrix.width
                 val height = bitMatrix.height
@@ -40,7 +38,7 @@ class QrGenerate {
                         bmp.setPixel(
                             x,
                             y,
-                            if (bitMatrix[x, y]) android.graphics.Color.BLACK else android.graphics.Color.WHITE
+                            if (bitMatrix[x, y]) Color.BLACK else Color.WHITE
                         )
                     }
                 }

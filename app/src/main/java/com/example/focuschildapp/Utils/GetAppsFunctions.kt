@@ -1,5 +1,6 @@
 package com.example.focuschildapp.com.example.focuschildapp.Utils
 
+import android.app.usage.UsageEvents
 import android.app.usage.UsageStats
 import android.app.usage.UsageStatsManager
 import android.content.Context
@@ -7,11 +8,14 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
+
 
 class GetAppsFunctions(
     private val packageManager: PackageManager,
@@ -29,7 +33,6 @@ class GetAppsFunctions(
         var listInstalledApps: List<ApplicationInfo> = packageManager.getInstalledApplications(
             PackageManager.GET_ACTIVITIES
         )
-
         nonSystemApps = listInstalledApps.filter { appInfo ->
             (appInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0) || (appInfo.packageName == "com.google.android.youtube") || (appInfo.packageName == "com.android.chrome")
         }
@@ -131,7 +134,6 @@ class GetAppsFunctions(
             context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager,
             context
         )
-
         myApps.getInstalledApps()
         var nonSystemApps = myApps.getNonSystemApps()
 
@@ -247,6 +249,28 @@ class GetAppsFunctions(
         return resultDate.toString()
     }
 
+    fun logTime(){
+        val usageStatsManager =
+            context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 
+        val startTime = System.currentTimeMillis() - 1000 * 60 * 60 * 24
+
+        val endTime = System.currentTimeMillis()
+
+        val usageEvents = usageStatsManager.queryEvents(startTime, endTime)
+
+        val event = UsageEvents.Event()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+
+        while (usageEvents.hasNextEvent()) {
+            usageEvents.getNextEvent(event)
+            if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND || event.eventType == UsageEvents.Event.MOVE_TO_BACKGROUND) {
+                val eventType =
+                    if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) "MOVE_TO_FOREGROUND" else "MOVE_TO_BACKGROUND"
+                val eventTimeString = dateFormat.format(Date(event.timeStamp))
+                Log.d("UsageEvents", "App: " + event.packageName + "Event Type: $eventType" + "Event Time: $eventTimeString")
+            }
+        }
+    }
 
 }

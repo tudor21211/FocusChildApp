@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.Navigation.SetupNavGraph
 import com.example.focuschildapp.Permissions.PermissionFunctions
@@ -26,7 +27,6 @@ import com.example.focuschildapp.com.example.focuschildapp.Services.ServerServic
 import com.example.focuschildapp.com.example.focuschildapp.Utils.GetAppsFunctions
 import com.example.websocket.RoomDB.AppDatabase
 import com.example.websocket.RoomDB.PackageViewModel
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,9 +49,8 @@ class MainActivity : ComponentActivity() {
         packagesViewModel = PackageViewModel(appDatabase.packagesDao())
 
         setContent {
-
-            navController = rememberAnimatedNavController()
-            SetupNavGraph(navController = navController, this, packagesViewModel)
+            navController = rememberNavController()
+            SetupNavGraph(navController = navController, this)
             AuthState()
         }
     }

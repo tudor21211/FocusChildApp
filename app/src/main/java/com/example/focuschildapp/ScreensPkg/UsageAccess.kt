@@ -97,7 +97,7 @@ fun UsageAccess(navController: NavController) {
 
         ) {
         Text(
-            text = "To enhance your Focus experience, the app requires access to your device's app usage. This permission enables us to accurately track and temporarily block distracting apps during your focused sessions. Rest assured, your data privacy is our priority, and we only utilize this information to optimize your productivity. Your commitment to focus is our inspiration!",
+            text ="To provide a comprehensive parental control experience, our app requires access to your child's app usage. This permission enables us to accurately monitor and block inappropriate apps. Rest assured, your child's data privacy is our priority, and we only utilize this information to enhance their safety. Your commitment to creating a safe digital space for your child inspires us!",
             color = Color.White,
             modifier = Modifier
                 .padding(16.dp)

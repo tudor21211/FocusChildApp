@@ -5,6 +5,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import com.example.focus.Presentation.Screens.Landing.LandingScreen
 import com.example.focuschildapp.ScreensPkg.Accessibility
 import com.example.focuschildapp.ScreensPkg.DisplayOverOtherApps
@@ -16,19 +17,16 @@ import com.example.focuschildapp.ScreensPkg.UsageAccess
 import com.example.focuschildapp.Utils.ProgressBar
 import com.example.websocket.RoomDB.PackageViewModel
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-
-import com.google.accompanist.navigation.animation.composable
+import androidx.navigation.compose.composable
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SetupNavGraph(
     navController: NavHostController,
     context : Context,
-    packagesViewModel: PackageViewModel
 ) {
 //change to LandingPage start destination
-    AnimatedNavHost(navController = navController, startDestination = Screens.LandingScreen.route) {
-
+    NavHost(navController = navController, startDestination = Screens.LandingScreen.route) {
 
         composable(Screens.LandingScreen.route) {
             LandingScreen(navController)

@@ -9,9 +9,10 @@ import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEnti
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedWebsiteEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.PackageStatsEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.RestrictedKeywordEntity
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.SpecialFeaturesEntity
 
 
-@Database(entities = [PackageEntity::class, BlockedAppEntity::class, BlockedWebsiteEntity::class, RestrictedKeywordEntity::class, PackageStatsEntity::class, AppTimeSpentEntity::class], version = 4)
+@Database(entities = [PackageEntity::class, BlockedAppEntity::class, BlockedWebsiteEntity::class, RestrictedKeywordEntity::class, PackageStatsEntity::class, AppTimeSpentEntity::class, SpecialFeaturesEntity::class], version = 4)
 abstract class AppDatabase : RoomDatabase(){
         abstract fun packagesDao(): PackagesDAO
 

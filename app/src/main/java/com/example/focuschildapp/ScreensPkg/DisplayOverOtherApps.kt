@@ -78,7 +78,7 @@ fun DisplayOverOtherApps(navController: NavController) {
 
         ) {
         Text(
-            text = "To ensure seamless blocking of distracting apps, focus. requires the 'App Overlay' permission. This allows us to display the distraction-free interface on top of other apps without interruption. Your privacy is paramount, and we only use this permission for the sole purpose of enhancing your focus. Thank you for understanding and prioritizing your productivity journey with focus.!",
+            text = "To effectively block inappropriate content, our app requires the 'App Overlay' permission. This allows us to display warnings and restrictions on top of other apps without interruption. Your child's privacy is paramount, and we only use this permission to ensure their safe browsing experience. Thank you for understanding and prioritizing your child's safety with our app!",
             color = Color.White,
             modifier = Modifier
                 .padding(16.dp)

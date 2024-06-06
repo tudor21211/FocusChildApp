@@ -1,5 +1,6 @@
 package com.example.focuschildapp.com.example.focuschildapp.ScreensPkg.MainPage
 
+import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -44,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -56,6 +58,7 @@ import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.R
 import com.example.focuschildapp.com.example.focuschildapp.Services.MyAccessibilityService
 import com.example.focuschildapp.com.example.focuschildapp.Services.ServerService
+import com.example.focuschildapp.com.example.focuschildapp.Utils.GetAppsFunctions
 import com.example.focuschildapp.com.example.focuschildapp.Utils.QrGenerate
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
@@ -193,6 +196,14 @@ fun MainPage(
                     fontFamily = FontFamily(Font(R.font.opensans_medium))
                 )
             }
+//            Button(onClick = {
+//                GetAppsFunctions(
+//                    context.packageManager,
+//                    context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager,
+//                    context = context).logTime()
+//            }) {
+//                Text(text = "Log Time")
+//            }
 
             Spacer(modifier = Modifier.fillMaxHeight(.15f))
 
@@ -362,7 +373,9 @@ fun CardFlipper(
         ), label = ""
     )
     ElevatedCard(
-        onClick = { onCardClick(cardType) },
+        onClick = {
+            onCardClick(cardType)
+        },
         elevation = CardDefaults.cardElevation(40.dp),
         modifier = modifier
             .graphicsLayer {

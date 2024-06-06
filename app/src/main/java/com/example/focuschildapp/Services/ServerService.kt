@@ -73,11 +73,12 @@ class ServerService : Service() {
         val client = OkHttpClient()
         val userUid = authRepository.currentUser?.uid ?: return
         val email = authRepository.currentUser?.email ?: return
-        val request = Request.Builder().url("ws://192.168.0.127:8200/ws/$userUid").build()
+        val request = Request.Builder().url("ws://192.168.0.139:8200/ws/$userUid").build()
         //val request = Request.Builder().url("wss://fastapi-project-zgaflnvvcq-ey.a.run.app/ws/$userUid").build()
         val listener = WebSocketManager(this, userUid, email)
         println("USER ID IS $userUid")
         val webSocket = client.newWebSocket(request, listener)
+        webSocket.send("CONNECTED_CHILD_WITH_ID_$userUid")
     }
 
     private fun start(): Notification {

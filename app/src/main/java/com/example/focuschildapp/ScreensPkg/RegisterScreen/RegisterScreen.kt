@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -52,7 +53,11 @@ import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.R
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LifecycleOwner
 import com.example.focuschildapp.Firebase.domain.Response
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -134,54 +139,7 @@ fun RegisterScreen(
                     "Register",
                     Color.White,
                     onClick = {
-                        if(password != repeatPassword)
-                            Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
-                        else {
-                            viewModel.signUpWithEmailAndPassword(email, password)
-
-                            viewModel.signUpResponse.observe(lifecycleOwner) { response ->
-                                when (response) {
-                                    is Response.Loading -> {
-                                        // Handle loading state
-                                    }
-
-                                    is Response.Success -> {
-                                        val data: Boolean = response.data
-                                        navController.navigate(Screens.PermissionsScreen.route)
-                                    }
-
-                                    is Response.Failure -> {
-                                        val exception: Exception = response.e
-                                        if (response.toString() == "Failure(e=com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted.)")
-                                            Toast.makeText(
-                                                context,
-                                                "Please input a valid email address",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        else if (response.toString() == "Failure(e=com.google.firebase.auth.FirebaseAuthUserCollisionException: The email address is already in use by another account.)")
-                                            Toast.makeText(
-                                                context,
-                                                "Email is already in use",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        else if (response.toString() == "Failure(e=com.google.firebase.auth.FirebaseAuthWeakPasswordException: The given password is invalid. [ Password should be at least 6 characters ])")
-                                            Toast.makeText(
-                                                context,
-                                                "Password should be at least 6 characters",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        else
-                                            Toast.makeText(
-                                                context,
-                                                "An error occurred",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                    }
-                                }
-                            }
-                        }
-
-
+                        handleRegisterClick(password, repeatPassword, context, viewModel, navController, email, lifecycleOwner)
                     })
                 Spacer(modifier = Modifier.fillMaxHeight(.2f))
                 Text(
@@ -212,6 +170,57 @@ fun RegisterScreen(
     }
 
 
+}
+
+fun handleRegisterClick(
+    password: String,
+    repeatPassword: String,
+    context: Context,
+    viewModel: SignUpViewModel,
+    navController: NavController,
+    email: String,
+    lifecycleOwner: LifecycleOwner
+) {
+    if (password != repeatPassword) {
+        Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+    } else {
+        viewModel.signUpWithEmailAndPassword(email, password)
+        viewModel.signUpResponse.observe(lifecycleOwner) { response ->
+            when (response) {
+                is Response.Loading -> {
+                    // Handle loading state
+                }
+                is Response.Success -> {
+                    navController.navigate(Screens.PermissionsScreen.route)
+                }
+                is Response.Failure -> {
+                    handleSignUpFailure(context, response)
+                }
+            }
+        }
+    }
+}
+
+fun handleSignUpFailure(context: Context, response: Response.Failure) {
+    val exception: Exception = response.e
+    when (exception) {
+        is FirebaseAuthInvalidCredentialsException ->
+            Toast.makeText(context, "Please input a valid email address", Toast.LENGTH_SHORT).show()
+        is FirebaseAuthUserCollisionException ->
+            Toast.makeText(context, "Email is already in use", Toast.LENGTH_SHORT).show()
+        is FirebaseAuthWeakPasswordException ->
+            Toast.makeText(context, "Password should be at least 6 characters", Toast.LENGTH_SHORT).show()
+        else ->
+            Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show()
+    }
+}
+
+@Composable
+fun LoadingIndicator() {
+    CircularProgressIndicator(
+        modifier = Modifier
+            .height(50.dp)
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -248,9 +257,11 @@ fun registerCards(topText: String, prompt: String, icon: ImageVector, isPassword
                     )
                 }
             },
-            modifier = Modifier.fillMaxWidth(1f).testTag(if (isPasswordField) "passwordField" else "emailField"),
+            modifier = Modifier
+                .fillMaxWidth(1f)
+                .testTag(if (isPasswordField) "passwordField" else "emailField"),
             colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.Black, // Text color
+                focusedTextColor = Color.Black, // Text color
                 containerColor = Color(0xFFF0EDED),
                 cursorColor = Color.Green,
                 focusedIndicatorColor = Color(0xFF39E913),

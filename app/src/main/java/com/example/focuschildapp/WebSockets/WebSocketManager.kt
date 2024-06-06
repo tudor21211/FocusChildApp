@@ -16,6 +16,7 @@ import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEnti
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedWebsiteEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.PackageStatsEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.RestrictedKeywordEntity
+import com.example.focuschildapp.com.example.focuschildapp.RoomDB.SpecialFeaturesEntity
 import com.example.focuschildapp.com.example.focuschildapp.Utils.GetAppsFunctions
 import com.example.focuschildapp.com.example.focuschildapp.Utils.QrGenerate
 import com.example.websocket.RoomDB.AppDatabase
@@ -212,6 +213,24 @@ class WebSocketManager(private val context: Context, private val userUid: String
                 val userId : String = data.getString("userId")
                 GlobalScope.launch(Dispatchers.Default) {
                     packagesViewModel.removeRestrictedKeyword(restrictedKeyword)
+                }
+            }
+
+            jsonObjectToProcess.has("${userUid}_UPDATE_REELS") -> {
+                val jsonArray = jsonObjectToProcess.getJSONArray("${userUid}_UPDATE_REELS")
+                val data =   jsonArray.getJSONObject(0)
+                val update = data.getBoolean("REELS")
+                GlobalScope.launch (Dispatchers.Default){
+                    packagesViewModel.insertSpecialFeaturesRestriction(SpecialFeaturesEntity(userUid, update))
+                }
+            }
+
+            jsonObjectToProcess.has("${userUid}_UPDATE_SHORTS") -> {
+                val jsonArray = jsonObjectToProcess.getJSONArray("${userUid}_UPDATE_SHORTS")
+                val data =   jsonArray.getJSONObject(0)
+                val update = data.getBoolean("SHORTS")
+                GlobalScope.launch (Dispatchers.Default){
+                    packagesViewModel.insertSpecialFeaturesRestriction(SpecialFeaturesEntity(userUid, shortsRestriction = update))
                 }
             }
 

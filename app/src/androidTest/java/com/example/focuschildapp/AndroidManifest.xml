@@ -1,0 +1,12 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.focuschildapp">
+
+    <application
+        android:name="dagger.hilt.android.testing.HiltTestApplication"
+        android:allowBackup="false"
+        android:label="FocusChildApp Test"
+        android:supportsRtl="true">
+        <!-- Other configurations if needed -->
+    </application>
+
+</manifest>
