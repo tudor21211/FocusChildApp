@@ -1,7 +1,6 @@
 package com.example.focuschildapp.Firebase.domain
 
 import com.google.firebase.auth.FirebaseUser
-import dagger.Provides
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 
@@ -19,14 +18,12 @@ interface AuthRepository {
 
     suspend fun firebaseSignUpWithEmailAndPassword(email: String, password: String): SignUpResponse
 
-    //TODO : Delete this
     suspend fun sendEmailVerification(): SendEmailVerificationResponse
 
     suspend fun firebaseSignInWithEmailAndPassword(email: String, password: String): SignInResponse
 
     suspend fun reloadFirebaseUser(): ReloadUserResponse
 
-    //TODO : Delete this
     suspend fun sendPasswordResetEmail(email: String): SendPasswordResetEmailResponse
 
     fun signOut()

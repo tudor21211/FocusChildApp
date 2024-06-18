@@ -41,13 +41,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.focuschildapp.R
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import coil.compose.rememberAsyncImagePainter
+
 @Composable
 fun UsageAccess(navController: NavController) {
 

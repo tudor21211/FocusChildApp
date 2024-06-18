@@ -41,8 +41,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.Permissions.PermissionFunctions
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.example.focuschildapp.R
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 sealed class Permission(
     val title: String,

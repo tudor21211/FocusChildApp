@@ -4,7 +4,6 @@ import com.example.focuschildapp.Firebase.data.AuthRepositoryImpl
 import com.example.focuschildapp.Firebase.domain.AuthRepository
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

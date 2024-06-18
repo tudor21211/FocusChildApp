@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -35,7 +34,6 @@ import androidx.navigation.NavController
 import com.example.focuschildapp.Firebase.domain.Response
 import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.R
-import com.example.focuschildapp.ScreensPkg.RegisterScreen.SignUpViewModel
 import com.example.focuschildapp.ScreensPkg.RegisterScreen.registerButton
 import com.example.focuschildapp.ScreensPkg.RegisterScreen.registerCards
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -72,7 +70,6 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = screenWidth * 0.05f, end = screenWidth * 0.05f)
-        //.border(1.dp, Color.Black)
     ) {
         Spacer(modifier = Modifier.fillMaxHeight(.05f))
         Box() {

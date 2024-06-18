@@ -66,4 +66,7 @@ interface PackagesDAO {
     @Query("SELECT shortsRestriction FROM specialFeatures")
     suspend fun areShortsBlocked() : Boolean
 
+    @Query("SELECT COUNT(*) FROM specialFeatures")
+    suspend fun getSpecialFeaturesCount(): Int
+
 }

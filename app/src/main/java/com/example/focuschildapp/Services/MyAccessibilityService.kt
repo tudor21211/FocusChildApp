@@ -17,7 +17,6 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.RequiresApi
-import com.example.focuschildapp.com.example.focuschildapp.Services.RestrictedAppView
 import com.example.websocket.RoomDB.AppDatabase
 import com.example.websocket.RoomDB.PackageViewModel
 import kotlinx.coroutines.Dispatchers
@@ -61,7 +60,7 @@ class MyAccessibilityService : AccessibilityService() {
 
 
         GlobalScope.launch {
-            if(packagesViewModel?.isAppBlocked(packageName) == 1) {
+            if (packagesViewModel?.isAppBlocked(packageName) == 1) {
                 withContext(Dispatchers.Main) {
                     if (!isOverlayShown) {
                         showRestrictedView()
@@ -78,12 +77,13 @@ class MyAccessibilityService : AccessibilityService() {
         }
 
 
-        // Remove the restricted view immediately if the user leaves the app
-
-
-
         GlobalScope.launch {
-            if (packageName == "com.instagram.android" && packagesViewModel?.areReelsBlocked() == true) {
+
+            val specialFeaturesCount = packagesViewModel?.getSpecialFeaturesCount()
+
+            if (specialFeaturesCount != 0 && packageName == "com.instagram.android" && packagesViewModel?.areReelsBlocked()
+                    ?.let { it } == true
+            ) {
 
                 if (idResourceName == "com.instagram.android:id/scrubber" || idResourceName == "com.instagram.android:id/clips_viewer_view_pager") {
 
@@ -95,7 +95,7 @@ class MyAccessibilityService : AccessibilityService() {
 
             }
 
-            if (packageName == "com.google.android.youtube" && packagesViewModel?.areShortsBlocked()==true) {
+            if (specialFeaturesCount != 0 && packageName == "com.google.android.youtube" && packagesViewModel?.areShortsBlocked() == true) {
                 if (idResourceName == "com.google.android.youtube:id/reel_progress_bar" || idResourceName == "com.google.android.youtube:id/reel_recycler") {
 
                     val home = Intent(Intent.ACTION_MAIN)
@@ -107,42 +107,42 @@ class MyAccessibilityService : AccessibilityService() {
         }
 
 
-                if (browserList.contains(packageName)) {
-                    try {
-                        if (AccessibilityEvent.eventTypeToString(event.eventType).contains("WINDOW")) {
-                            var nodeEventInfo = event.source
-                            if (nodeEventInfo != null) {
-                                getAllWindowContent(nodeEventInfo)
-                            }
-                        }
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
+        if (browserList.contains(packageName)) {
+            try {
+                if (AccessibilityEvent.eventTypeToString(event.eventType).contains("WINDOW")) {
+                    var nodeEventInfo = event.source
+                    if (nodeEventInfo != null) {
+                        getAllWindowContent(nodeEventInfo)
                     }
                 }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
 
-                if (packageName == "com.android.chrome") {
+        if (packageName == "com.android.chrome") {
 
-                    var findUrlBar =
-                        accessNodeInfo?.findAccessibilityNodeInfosByViewId("com.android.chrome:id/url_bar")
-                    if (!findUrlBar.isNullOrEmpty()) {
-                        val text = findUrlBar?.get(0)?.text.toString()
-                        try {
-                             GlobalScope.launch {
-                                 val isBlockedWebsite = packagesViewModel?.isWebsiteBlocked(text)
-                                 if(isBlockedWebsite == true) {
-                                     val url = UserPreferences.getNavigateUrl()
-                                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                                     intent.flags = FLAG_ACTIVITY_NEW_TASK
-                                     startActivity(intent)
-                                 }
-                             }
-
-                        } catch (e: Exception) {
-                            e.printStackTrace()
+            var findUrlBar =
+                accessNodeInfo?.findAccessibilityNodeInfosByViewId("com.android.chrome:id/url_bar")
+            if (!findUrlBar.isNullOrEmpty()) {
+                val text = findUrlBar?.get(0)?.text.toString()
+                try {
+                    GlobalScope.launch {
+                        val isBlockedWebsite = packagesViewModel?.isWebsiteBlocked(text)
+                        if (isBlockedWebsite == true) {
+                            val url = UserPreferences.getNavigateUrl()
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            intent.flags = FLAG_ACTIVITY_NEW_TASK
+                            startActivity(intent)
                         }
                     }
 
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
+            }
+
+        }
 
 
     }
@@ -203,6 +203,7 @@ class MyAccessibilityService : AccessibilityService() {
     private val browserList: List<String> = BROWSERS.split(",\\s*")
     private val blacklistedKeywords: List<String>
         get() = runBlocking { packagesViewModel?.getRestrictedKeywords() ?: listOf() }
+
     private fun getAllWindowContent(info: AccessibilityNodeInfo) {
 
         try {

@@ -9,8 +9,6 @@ class PackageUninstallReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == Intent.ACTION_PACKAGE_REMOVED) {
             val packageName = intent.data?.schemeSpecificPart
-            // Do something when a package is uninstalled
-            // For example, show a toast message
             context?.let {
                 Toast.makeText(it, "Package uninstalled: $packageName", Toast.LENGTH_SHORT).show()
             }

@@ -4,7 +4,6 @@ import android.R
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.content.IntentFilter
@@ -14,13 +13,8 @@ import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.example.focuschildapp.Firebase.domain.AuthRepository
-import com.example.focuschildapp.MainActivity
-import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.com.example.focuschildapp.BroadcastReceivers.NetworkChangeReceiver
-import com.example.focuschildapp.com.example.focuschildapp.ScreensPkg.MainPage.MainPageViewModel
 import com.example.focuschildapp.com.example.focuschildapp.WebSockets.WebSocketManager
-import com.example.websocket.RoomDB.AppDatabase
-import com.example.websocket.RoomDB.PackageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -39,7 +33,6 @@ class ServerService : Service() {
 
 
     override fun onBind(intent: Intent?): IBinder? {
-        // A client is binding to the service with bindService()
         return null
     }
 
@@ -96,7 +89,6 @@ class ServerService : Service() {
     }
 
     override fun onDestroy() {
-        // The service is no longer used and is being destroyed
         Toast.makeText(this, "Service destroyed", Toast.LENGTH_SHORT).show()
         unregisterReceiver(networkChangeReceiver)
     }

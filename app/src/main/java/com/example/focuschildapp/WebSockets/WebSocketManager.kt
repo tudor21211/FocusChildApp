@@ -23,13 +23,14 @@ import com.example.websocket.RoomDB.AppDatabase
 import com.example.websocket.RoomDB.PackageViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.*
+import okhttp3.Response
+import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
 import org.json.JSONArray
@@ -98,7 +99,7 @@ class WebSocketManager(private val context: Context, private val userUid: String
                         jsonArray.put(jsonObject)
                     }
                     val finalJsonObject = JSONObject().apply {
-                        put("addUserToDatabase", jsonArray) // Add the array to a final JSON object
+                        put("addUserToDatabase", jsonArray)
                     }
                     webSocket.send(finalJsonObject.toString())
                 }
@@ -154,7 +155,7 @@ class WebSocketManager(private val context: Context, private val userUid: String
                         }
                     )
                     val finalJsonObject = JSONObject().apply {
-                        put("ADD_STATISTICS_DETAILS", jsonArray) // Add the array to a final JSON object
+                        put("ADD_STATISTICS_DETAILS", jsonArray)
                     }
                     webSocket.send(finalJsonObject.toString())
                 }
@@ -234,7 +235,6 @@ class WebSocketManager(private val context: Context, private val userUid: String
                 }
             }
 
-            //UPDATE APPS DATA AFTER RECEIVING THE REQUEST
             text.startsWith("$userUid UPDATE_APPS_DATA") -> {
                 val allApps = GetAppsFunctions(
                     context.packageManager,
@@ -257,7 +257,7 @@ class WebSocketManager(private val context: Context, private val userUid: String
                         put("updateTime", sdf.format(resultDate))
                     })
                     val finalJsonObject = JSONObject().apply {
-                        put("UPDATE_APPS_DATA", jsonArray) // Add the array to a final JSON object
+                        put("UPDATE_APPS_DATA", jsonArray)
                     }
                     webSocket.send(finalJsonObject.toString())
                 }
@@ -301,8 +301,8 @@ class WebSocketManager(private val context: Context, private val userUid: String
         }
 
         val locationRequest = LocationRequest.create().apply {
-            interval = 10000 // Set the desired interval for active location updates, in milliseconds.
-            fastestInterval = 5000 // Set the fastest rate for active location updates, in milliseconds.
+            interval = 10000
+            fastestInterval = 5000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
@@ -311,11 +311,9 @@ class WebSocketManager(private val context: Context, private val userUid: String
                 locationResult ?: return
                 for (location in locationResult.locations) {
                     if (lastLocation != null && location.latitude == lastLocation!!.latitude && location.longitude == lastLocation!!.longitude) {
-                        // Stop location updates if the new location is the same as the last location
-                        //fusedLocationClient.removeLocationUpdates(this)
                         break
                     } else {
-                        lastLocation = location // Update the last location
+                        lastLocation = location
                         val jsonArray = JSONArray().apply {
                             put(userId)
                             put(location.latitude)

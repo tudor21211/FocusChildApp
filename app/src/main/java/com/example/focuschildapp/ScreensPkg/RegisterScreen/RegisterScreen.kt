@@ -38,7 +38,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.Font
@@ -48,13 +47,13 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
+import com.example.focuschildapp.Firebase.domain.Response
 import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.R
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.LifecycleOwner
-import com.example.focuschildapp.Firebase.domain.Response
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
@@ -90,7 +89,6 @@ fun RegisterScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = screenWidth * 0.05f, end = screenWidth * 0.05f)
-            //.border(1.dp, Color.Black)
     ) {
         Spacer(modifier = Modifier.fillMaxHeight(.05f))
         Box() {
@@ -188,7 +186,7 @@ fun handleRegisterClick(
         viewModel.signUpResponse.observe(lifecycleOwner) { response ->
             when (response) {
                 is Response.Loading -> {
-                    // Handle loading state
+                    //TODO Handle loading state
                 }
                 is Response.Success -> {
                     navController.navigate(Screens.PermissionsScreen.route)
@@ -261,7 +259,7 @@ fun registerCards(topText: String, prompt: String, icon: ImageVector, isPassword
                 .fillMaxWidth(1f)
                 .testTag(if (isPasswordField) "passwordField" else "emailField"),
             colors = TextFieldDefaults.textFieldColors(
-                focusedTextColor = Color.Black, // Text color
+                focusedTextColor = Color.Black,
                 containerColor = Color(0xFFF0EDED),
                 cursorColor = Color.Green,
                 focusedIndicatorColor = Color(0xFF39E913),
@@ -287,7 +285,7 @@ fun registerButton(
     Column() {
         Spacer(modifier = Modifier.fillMaxHeight(.05f))
         Button(
-            onClick = onClick, //add register functionality
+            onClick = onClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(shape = RoundedCornerShape(10.dp))

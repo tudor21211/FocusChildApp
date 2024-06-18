@@ -1,6 +1,5 @@
 package com.example.focuschildapp.com.example.focuschildapp.ScreensPkg.MainPage
 
-import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -34,7 +33,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +43,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -56,9 +53,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.R
-import com.example.focuschildapp.com.example.focuschildapp.Services.MyAccessibilityService
 import com.example.focuschildapp.com.example.focuschildapp.Services.ServerService
-import com.example.focuschildapp.com.example.focuschildapp.Utils.GetAppsFunctions
 import com.example.focuschildapp.com.example.focuschildapp.Utils.QrGenerate
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
@@ -92,7 +87,6 @@ fun MainPage(
 
     var connectionStatus by remember { mutableStateOf(parentDeviceConnected) }
 
-    //LIVE UPDATE OF CONNECTION STATUS
     DisposableEffect(key1 = sharedPreferences) {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (key == "PARENT_DEVICE_CONNECTED") {
@@ -151,7 +145,6 @@ fun MainPage(
                 dismissButton = {
                     Button(
                         onClick = {
-                            //onNoClicked()
                             showDialog = false
                         },
                         colors = ButtonDefaults.buttonColors(Color.Transparent)
@@ -166,14 +159,12 @@ fun MainPage(
                 .fillMaxSize()
                 .padding(start = screenWidth * 0.05f, end = screenWidth * 0.05f)
                 .background(Color(0xFF34495e)),
-            //.border(1.dp, Color.Black),
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
 
             ) {
             Row(
                 modifier = Modifier.padding(top = 10.dp)
             ) {
-                //Text(text = "User: ", fontSize = 25.sp, color = Color.White, fontFamily = FontFamily(Font(R.font.opensans_medium)))
                 Icon(
                     imageVector = Icons.Filled.Person,
                     contentDescription = "go to settings",
@@ -196,20 +187,12 @@ fun MainPage(
                     fontFamily = FontFamily(Font(R.font.opensans_medium))
                 )
             }
-//            Button(onClick = {
-//                GetAppsFunctions(
-//                    context.packageManager,
-//                    context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager,
-//                    context = context).logTime()
-//            }) {
-//                Text(text = "Log Time")
-//            }
 
             Spacer(modifier = Modifier.fillMaxHeight(.15f))
 
             var cardFace by remember { mutableStateOf(FaceCardType.Back) }
 
-            //QRCodeFromByteArray(byteArray = viewModel.getUserUid()?.toByteArray() ?: byteArrayOf())
+
             CardFlipper(
                 cardType = cardFace,
                 onCardClick = {
@@ -221,7 +204,6 @@ fun MainPage(
                     .fillMaxWidth(1f)
                     .padding(20.dp),
                 backContent = {
-                    // Back content
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -257,7 +239,6 @@ fun MainPage(
                     }
                 },
                 frontContent = {
-                    // Front content
                     ElevatedQrCard(viewModel = viewModel)
                 }
             )
@@ -280,7 +261,6 @@ fun QRCodeFromByteArray(byteArray: ByteArray) {
 
     Box(modifier = Modifier
         .padding(10.dp)
-        //.border(1.dp, Color.Black)
         .fillMaxSize(1f)) {
         bitmap?.let {
             Image(

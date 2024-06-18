@@ -32,7 +32,6 @@ class LocationActivity : ComponentActivity() {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
                 location?.let {
-                    // Send the location coordinates through the WebSocket
                     val message = "Location is ${location.latitude} and ${location.longitude}"
                     println("Location is ${location.latitude} and ${location.longitude}")
                 }

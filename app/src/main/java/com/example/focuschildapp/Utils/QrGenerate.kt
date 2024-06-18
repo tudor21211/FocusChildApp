@@ -83,7 +83,7 @@ class QrGenerate {
             return stream.toByteArray()
         }
 
-        //CONVERT BACK TO DRAWABLE
+
         fun byteStringToDrawable(byteString: String): Drawable {
             val byteArray = Base64.decode(byteString, Base64.DEFAULT)
             val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)

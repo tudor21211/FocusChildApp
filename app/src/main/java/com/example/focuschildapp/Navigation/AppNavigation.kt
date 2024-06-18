@@ -3,21 +3,18 @@ package com.example.focuschildapp.Navigation
 import android.content.Context
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
-
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.example.focus.Presentation.Screens.Landing.LandingScreen
 import com.example.focuschildapp.ScreensPkg.Accessibility
 import com.example.focuschildapp.ScreensPkg.DisplayOverOtherApps
-import com.example.focuschildapp.com.example.focuschildapp.ScreensPkg.LoginScreen.LoginScreen
-import com.example.focuschildapp.com.example.focuschildapp.ScreensPkg.MainPage.MainPage
 import com.example.focuschildapp.ScreensPkg.PermissionScreen
 import com.example.focuschildapp.ScreensPkg.RegisterScreen.RegisterScreen
 import com.example.focuschildapp.ScreensPkg.UsageAccess
 import com.example.focuschildapp.Utils.ProgressBar
-import com.example.websocket.RoomDB.PackageViewModel
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import androidx.navigation.compose.composable
+import com.example.focuschildapp.com.example.focuschildapp.ScreensPkg.LoginScreen.LoginScreen
+import com.example.focuschildapp.com.example.focuschildapp.ScreensPkg.MainPage.MainPage
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -25,7 +22,6 @@ fun SetupNavGraph(
     navController: NavHostController,
     context : Context,
 ) {
-//change to LandingPage start destination
     NavHost(navController = navController, startDestination = Screens.LandingScreen.route) {
 
         composable(Screens.LandingScreen.route) {
@@ -58,7 +54,6 @@ fun SetupNavGraph(
             ProgressBar(navController)
         }
 
-        //TODO !!!! FIX PERMISSION SCREEN NAVIGATION TO SETTINGS, NOT ACCEPTING, BACK BACK
 
     }
 }

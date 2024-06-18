@@ -39,7 +39,6 @@ class RestrictedAppView(context: Context) : FrameLayout(context) {
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        // Doesn't allow system events to be processed
         return true
     }
 

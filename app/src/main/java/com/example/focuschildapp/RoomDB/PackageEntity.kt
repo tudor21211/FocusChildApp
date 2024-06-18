@@ -1,7 +1,5 @@
 package com.example.websocket.RoomDB
 
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey

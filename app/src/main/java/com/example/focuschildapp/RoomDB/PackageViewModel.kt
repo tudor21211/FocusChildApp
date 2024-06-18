@@ -1,8 +1,6 @@
 package com.example.websocket.RoomDB
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.AppTimeSpentEntity
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.BlockedAppEntity
@@ -38,6 +36,9 @@ class PackageViewModel (private val packagesDao : PackagesDAO) : ViewModel() {
         return packagesDao.areShortsBlocked()
     }
 
+    suspend fun getSpecialFeaturesCount(): Int {
+        return packagesDao.getSpecialFeaturesCount()
+    }
     suspend fun insertBlockedWebsite(blockedWebsiteEntity: BlockedWebsiteEntity) = viewModelScope.launch {
         packagesDao.insertBlockedWebsite(blockedWebsiteEntity)
     }

@@ -14,7 +14,6 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavHostController
@@ -23,7 +22,6 @@ import com.example.focuschildapp.Navigation.Screens
 import com.example.focuschildapp.Navigation.SetupNavGraph
 import com.example.focuschildapp.Permissions.PermissionFunctions
 import com.example.focuschildapp.com.example.focuschildapp.RoomDB.AppTimeSpentEntity
-import com.example.focuschildapp.com.example.focuschildapp.Services.ServerService
 import com.example.focuschildapp.com.example.focuschildapp.Utils.GetAppsFunctions
 import com.example.websocket.RoomDB.AppDatabase
 import com.example.websocket.RoomDB.PackageViewModel
@@ -130,13 +128,13 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun AuthState() {
         val isUserSignedOut = viewModel.getAuthState().collectAsState().value
-        if (isUserSignedOut) { //we are not connected
+        if (isUserSignedOut) {
             NavigateToLandingPage()
         } else if(!isUserSignedOut && !PermissionFunctions(this, packageName).areAllPermissionsEnabled()) { // we are connected but we didnt accept all the permissions
             NavigateToPermissions()
         }
         else {
-            NavigateToMainScreen() //we are connected and we accepted the permissions -> navigate to mainPage
+            NavigateToMainScreen()
         }
     }
 
